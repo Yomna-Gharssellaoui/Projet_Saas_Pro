@@ -10,8 +10,8 @@ import { AIInsightEntity } from "../modules/ai-insights/entities/ai-insight.enti
 
 export const typeOrmConfig = (): TypeOrmModuleOptions => ({
   type: "postgres",
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
+  host: process.env.DB_HOST === 'db' ? 'localhost' : (process.env.DB_HOST || 'localhost'),
+  port: Number(process.env.DB_PORT || 5432),
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
@@ -24,6 +24,7 @@ export const typeOrmConfig = (): TypeOrmModuleOptions => ({
     ExpenseEntity,
     TeamMemberEntity,
     AIInsightEntity,
+   
   ],
   autoLoadEntities: true,
 

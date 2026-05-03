@@ -57,7 +57,7 @@ import { InvoiceLateRisk } from '@/app/pages/ai/InvoiceLateRisk';
 import { InvoiceCollectionCopilot } from '@/app/pages/ai/InvoiceCollectionCopilot';
 import { WhatIfSimulator } from '@/app/pages/ai/WhatIfSimulator';
 import AIReport from "@/app/pages/ai/AIReport";
-import { FinanceAIPage } from '../../finance-rag-frontend/finance-rag-frontend/src/pages/FinanceAIPage';
+import { InvoiceChatbot } from '@/app/pages/ai/InvoiceChatbot';
 // Company setup
 import CompanySetup from '@/app/pages/businesses/CompanySetup';
 
@@ -195,11 +195,11 @@ export const router = createBrowserRouter([
   ),
 },
       {
-        path: 'finance-ai',
+        path: 'invoice-chatbot',
         element: (
           <RequireCompanySetup>
             <RequirePermission permission="ai:read">
-              <FinanceAIPage />
+              <InvoiceChatbot />
             </RequirePermission>
           </RequireCompanySetup>
         ),

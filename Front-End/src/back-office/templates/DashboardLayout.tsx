@@ -57,8 +57,8 @@ const navigation: NavItem[] = [
     badge: 'AI',
   },
   {
-    name: 'Finance AI',
-    href: '/dashboard/finance-ai',
+    name: 'Invoice Chatbot',
+    href: '/dashboard/invoice-chatbot',
     icon: Bot,
     perm: 'ai.read',
     badge: 'AI',

@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { InvoicesService } from "./invoices.service";
+import { InvoiceChatbotService } from "../invoice-chatbot/invoice-chatbot.service";
 import { CreateInvoiceDto } from "./dto/create-invoice.dto";
 import { UpdateInvoiceDto } from "./dto/update-invoice.dto";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -9,9 +10,27 @@ import { PermissionsGuard } from "../../common/guards/permissions.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
 @Controller("invoices")
-@UseGuards(JwtAuthGuard, BusinessAccessGuard, PermissionsGuard)
 export class InvoicesController {
-  constructor(private readonly s: InvoicesService) {}
+  constructor(
+    private readonly s: InvoicesService,
+    private readonly chatbot: InvoiceChatbotService
+  ) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post('chat')
+  async chat(@Body() body: { message: string }) {
+    return this.chatbot.chat(body.message);
+  }
+
+  @Get('hello')
+  hello() {
+    return { status: 'invoices module is alive' };
+  }
+
+  @UseGuards(JwtAuthGuard, BusinessAccessGuard, PermissionsGuard)
+  @Post('protected-test')
+  test() { return { ok: true }; }
+
 
   @Post()
   @RequirePermissions("invoices:write")

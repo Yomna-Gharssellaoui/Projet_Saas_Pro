@@ -1,9 +1,6 @@
 fastapi
 uvicorn[standard]
-chromadb
+psycopg2-binary
 sentence-transformers
-ollama
-pandas
-PyPDF2
-tqdm
+python-dotenv
 pydantic
