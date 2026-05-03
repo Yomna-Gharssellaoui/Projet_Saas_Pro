@@ -25,6 +25,10 @@ async function sendChatMessage(message: string): Promise<{ text: string; type: s
 }
 
 function DataTable({ table }: { table: TableData }) {
+  if (!table || !Array.isArray(table.headers) || !Array.isArray(table.rows)) {
+    return null;
+  }
+
   return (
     <div className="mt-3 overflow-x-auto rounded-xl border border-indigo-200 dark:border-indigo-800">
       <table className="min-w-full text-sm">
@@ -43,7 +47,7 @@ function DataTable({ table }: { table: TableData }) {
               key={ri}
               className={ri % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-indigo-50/50 dark:bg-indigo-900/20'}
             >
-              {row.map((cell, ci) => (
+              {Array.isArray(row) && row.map((cell, ci) => (
                 <td key={ci} className="px-4 py-2 text-foreground">
                   {cell}
                 </td>
@@ -202,7 +206,10 @@ export function InvoiceChatbot() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 space-y-5 overflow-y-auto bg-background px-4 py-6 sm:px-6">
+      <div 
+        className="flex-1 space-y-5 overflow-y-auto bg-background px-4 py-6 sm:px-6"
+        aria-live="polite"
+      >
         {messages.map((msg) => (
           <ChatBubble key={msg.id} message={msg} />
         ))}
@@ -248,6 +255,7 @@ export function InvoiceChatbot() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask about invoices, clients, revenue…"
+            aria-label="Chat input"
             disabled={loading}
             className="flex-1 resize-none bg-transparent text-sm text-foreground placeholder-muted-foreground outline-none disabled:opacity-50"
             style={{ maxHeight: '120px' }}
@@ -255,7 +263,8 @@ export function InvoiceChatbot() {
           <button
             onClick={() => handleSend()}
             disabled={loading || !input.trim()}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md transition hover:opacity-90 disabled:opacity-40"
+            aria-label="Send message"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md transition hover:opacity-90 disabled:opacity-40"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

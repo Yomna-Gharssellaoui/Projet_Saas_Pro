@@ -313,5 +313,11 @@ def build_response(intent: str, data: Any, entities: dict = {}) -> dict:
     )
 
 
-def _reply(text: str, type_: str, table: list | None = None) -> dict:
-    return {"text": text, "type": type_, "table": table}
+def _reply(text: str, type_: str, table: list[dict] | None = None) -> dict:
+    formatted_table = None
+    if table and len(table) > 0:
+        headers = list(table[0].keys())
+        rows = [[str(item.get(h, "")) for h in headers] for item in table]
+        formatted_table = {"headers": headers, "rows": rows}
+    
+    return {"text": text, "type": type_, "table": formatted_table}

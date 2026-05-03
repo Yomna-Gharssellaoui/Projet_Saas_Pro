@@ -528,9 +528,10 @@ export function Expenses() {
                 />
               </div>
 
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 flex flex-col gap-1.5">
+                <label htmlFor="category-filter" className="text-xs font-medium text-muted-foreground ml-1">Catégorie</label>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger id="category-filter" aria-label="Filtrer par catégorie">
                     <SelectValue placeholder="Catégorie" />
                   </SelectTrigger>
                   <SelectContent>
@@ -544,12 +545,13 @@ export function Expenses() {
                 </Select>
               </div>
 
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 flex flex-col gap-1.5">
+                <label htmlFor="status-filter" className="text-xs font-medium text-muted-foreground ml-1">Statut</label>
                 <Select
                   value={statusFilter}
                   onValueChange={(v) => setStatusFilter(v as StatusFilter)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="status-filter" aria-label="Filtrer par statut">
                     <SelectValue placeholder="Statut" />
                   </SelectTrigger>
                   <SelectContent>
@@ -561,12 +563,13 @@ export function Expenses() {
                 </Select>
               </div>
 
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 flex flex-col gap-1.5">
+                <label htmlFor="date-filter" className="text-xs font-medium text-muted-foreground ml-1">Période</label>
                 <Select
                   value={dateFilter}
                   onValueChange={(v) => setDateFilter(v as DateFilter)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="date-filter" aria-label="Filtrer par période">
                     <CalendarRange className="mr-2 h-4 w-4 text-muted-foreground" />
                     <SelectValue placeholder="Période" />
                   </SelectTrigger>
@@ -580,9 +583,10 @@ export function Expenses() {
                 </Select>
               </div>
 
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 flex flex-col gap-1.5">
+                <label htmlFor="sort-by" className="text-xs font-medium text-muted-foreground ml-1">Trier</label>
                 <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                  <SelectTrigger>
+                  <SelectTrigger id="sort-by" aria-label="Trier par">
                     <ArrowUpDown className="mr-2 h-4 w-4 text-muted-foreground" />
                     <SelectValue placeholder="Trier" />
                   </SelectTrigger>
@@ -692,6 +696,7 @@ export function Expenses() {
                               size="sm"
                               onClick={() => setSelectedExpense(expense)}
                               title="Voir les détails"
+                              aria-label={`Voir les détails de la dépense ${expense.description || ""}`}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -700,10 +705,11 @@ export function Expenses() {
                               <>
                                 <Button
                                   variant="ghost"
-                                  size="sm"
+                                  size="icon"
                                   disabled={updatingId === expense.id}
                                   onClick={() => setApproveTarget(expense)}
                                   className="text-green-600 hover:text-green-700"
+                                  aria-label="Approuver"
                                   title="Approuver"
                                 >
                                   {updatingId === expense.id ? (
@@ -715,10 +721,11 @@ export function Expenses() {
 
                                 <Button
                                   variant="ghost"
-                                  size="sm"
+                                  size="icon"
                                   disabled={updatingId === expense.id}
                                   onClick={() => setRejectTarget(expense)}
                                   className="text-red-600 hover:text-red-700"
+                                  aria-label="Rejeter"
                                   title="Rejeter"
                                 >
                                   {updatingId === expense.id ? (

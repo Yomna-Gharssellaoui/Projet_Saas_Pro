@@ -6,7 +6,7 @@ export const useSocket = () => {
 
   useEffect(() => {
     // Connexion au serveur NestJS (Port 3000 par défaut)
-    const newSocket = io('http://localhost:3000', {
+    const newSocket = io('http://localhost:3001', {
       auth: {
         // On récupère le token JWT pour que le serveur sache qui est l'admin
         token: localStorage.getItem('access_token'), 

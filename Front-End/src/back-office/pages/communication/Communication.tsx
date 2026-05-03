@@ -13,7 +13,7 @@ import {
   MessageSquare, Sparkles, BellOff,
 } from 'lucide-react';
 
-const API_BASE = ((import.meta as any).env?.VITE_API_URL ?? 'http://localhost:3000/api').replace(/\/+$/, '');
+const API_BASE = ((import.meta as any).env?.VITE_API_URL ?? 'http://localhost:3001/api').replace(/\/+$/, '');
 const SOCKET_URL = API_BASE.endsWith('/api') ? API_BASE.slice(0, -4) : API_BASE;
 const ICE_SERVERS = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
@@ -138,7 +138,7 @@ function CalendarView({ meetings, onSchedule, channels }: { meetings: Meeting[];
       <div style={{ padding: '20px 24px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: 0 }}>Calendar</h2>
-          <p style={{ fontSize: 12, color: '#888', margin: '2px 0 0' }}>{todayMeetings.length} meetings today</p>
+          <p style={{ fontSize: 12, color: '#3f3f46', margin: '2px 0 0' }}>{todayMeetings.length} meetings today</p>
         </div>
         <button onClick={() => { setForm(f => ({ ...f, date: today.toISOString().slice(0, 10) })); setShowForm(true); }}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: '#6366f1', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
@@ -151,14 +151,14 @@ function CalendarView({ meetings, onSchedule, channels }: { meetings: Meeting[];
         <div style={{ flex: 1, padding: '16px 24px', overflowY: 'auto' }}>
           {/* Month nav */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <button onClick={() => setViewDate(new Date(year, month - 1, 1))} style={{ background: 'none', border: '1px solid #e5e7eb', borderRadius: 8, padding: '4px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><ChevronLeft size={16} /></button>
+            <button onClick={() => setViewDate(new Date(year, month - 1, 1))} style={{ background: 'none', border: '1px solid #e5e7eb', borderRadius: 8, padding: '4px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} aria-label="Previous month"><ChevronLeft size={16} /></button>
             <span style={{ fontSize: 15, fontWeight: 700, color: '#111' }}>{monthNames[month]} {year}</span>
-            <button onClick={() => setViewDate(new Date(year, month + 1, 1))} style={{ background: 'none', border: '1px solid #e5e7eb', borderRadius: 8, padding: '4px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><ChevronRight size={16} /></button>
+            <button onClick={() => setViewDate(new Date(year, month + 1, 1))} style={{ background: 'none', border: '1px solid #e5e7eb', borderRadius: 8, padding: '4px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} aria-label="Next month"><ChevronRight size={16} /></button>
           </div>
 
           {/* Day names */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
-            {dayNames.map(d => <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#aaa', padding: '4px 0' }}>{d}</div>)}
+            {dayNames.map(d => <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#71717a', padding: '4px 0' }}>{d}</div>)}
           </div>
 
           {/* Days */}
@@ -183,14 +183,14 @@ function CalendarView({ meetings, onSchedule, channels }: { meetings: Meeting[];
 
         {/* Upcoming meetings sidebar */}
         <div style={{ width: 220, borderLeft: '1px solid #f0f0f0', padding: '16px 14px', overflowY: 'auto' }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Upcoming</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#71717a', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Upcoming</p>
           {meetings.length === 0 ? (
-            <p style={{ fontSize: 12, color: '#bbb', textAlign: 'center', marginTop: 24 }}>No meetings scheduled</p>
+            <p style={{ fontSize: 12, color: '#71717a', textAlign: 'center', marginTop: 24 }}>No meetings scheduled</p>
           ) : meetings.sort((a, b) => `${a.date}${a.time}` > `${b.date}${b.time}` ? 1 : -1).slice(0, 10).map(m => (
             <div key={m.id} style={{ marginBottom: 10, padding: '8px 10px', background: '#fafafa', borderRadius: 10, borderLeft: '3px solid #6366f1' }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: '#111', margin: '0 0 2px' }}>{m.title}</p>
-              <p style={{ fontSize: 11, color: '#888', margin: 0 }}>{m.date} · {m.time}</p>
-              <p style={{ fontSize: 11, color: '#aaa', margin: '2px 0 0' }}>#{m.channelName} · {m.duration}min</p>
+              <p style={{ fontSize: 11, color: '#52525b', margin: 0 }}>{m.date} · {m.time}</p>
+              <p style={{ fontSize: 11, color: '#71717a', margin: '2px 0 0' }}>#{m.channelName} · {m.duration}min</p>
               {m.recurring !== 'none' && <span style={{ fontSize: 10, background: '#eef2ff', color: '#6366f1', borderRadius: 4, padding: '1px 5px' }}>{m.recurring}</span>}
             </div>
           ))}
@@ -203,7 +203,7 @@ function CalendarView({ meetings, onSchedule, channels }: { meetings: Meeting[];
           <div style={{ background: '#fff', borderRadius: 20, padding: 28, width: 420, boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>Schedule Meeting</h3>
-              <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888' }}><X size={18} /></button>
+              <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }} aria-label="Close modal"><X size={18} /></button>
             </div>
 
             {[
@@ -313,14 +313,14 @@ function CreateChannelModal({ onClose, onCreate, user }: { onClose: () => void; 
         <div style={{ marginBottom: 14 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: '#555', display: 'block', marginBottom: 5 }}>Channel Name</label>
           <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
-            <span style={{ padding: '0 10px', color: '#aaa', fontSize: 14 }}>#</span>
+            <span style={{ padding: '0 10px', color: '#71717a', fontSize: 14 }}>#</span>
             <input value={name} onChange={e => setName(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
               placeholder='channel-name' style={{ flex: 1, padding: '9px 8px 9px 0', border: 'none', fontSize: 13, outline: 'none' }} />
           </div>
         </div>
 
         <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: '#555', display: 'block', marginBottom: 5 }}>Description <span style={{ fontWeight: 400, color: '#bbb' }}>(optional)</span></label>
+          <label style={{ fontSize: 12, fontWeight: 600, color: '#555', display: 'block', marginBottom: 5 }}>Description <span style={{ fontWeight: 400, color: '#71717a' }}>(optional)</span></label>
           <input value={description} onChange={e => setDescription(e.target.value)} placeholder='What is this channel for?'
             style={{ width: '100%', padding: '9px 12px', border: '1.5px solid #e5e7eb', borderRadius: 10, fontSize: 13, outline: 'none', boxSizing: 'border-box' }} />
         </div>
@@ -1039,11 +1039,11 @@ export function Communication() {
             <span style={{ fontSize: 15, fontWeight: 700, color: '#fff', letterSpacing: -0.3 }}>Workspace</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <div style={{ width: 7, height: 7, borderRadius: '50%', background: connected ? '#34d399' : '#f87171' }} />
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{connected ? 'Live' : 'Offline'}</span>
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)' }}>{connected ? 'Live' : 'Offline'}</span>
             </div>
           </div>
           <div style={{ position: 'relative' }}>
-            <Search style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} size={13} />
+            <Search style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }} size={13} />
             <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder='Search channels…'
               style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 9, padding: '7px 10px 7px 28px', fontSize: 12, color: '#fff', outline: 'none', boxSizing: 'border-box' }} />
           </div>
@@ -1057,7 +1057,7 @@ export function Communication() {
             { icon: <CalendarDays size={14} />, label: 'Calendar', view: 'calendar' as const },
           ].map(item => (
             <button key={item.view} onClick={() => setActiveView(item.view as any)}
-              style={{ ...btnBase, width: '100%', justifyContent: 'flex-start', gap: 9, padding: '8px 10px', borderRadius: 8, background: activeView === item.view ? 'rgba(99,102,241,0.25)' : 'none', color: activeView === item.view ? '#a5b4fc' : 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: 500, marginBottom: 2 }}>
+              style={{ ...btnBase, width: '100%', justifyContent: 'flex-start', gap: 9, padding: '8px 10px', borderRadius: 8, background: activeView === item.view ? 'rgba(99,102,241,0.25)' : 'none', color: activeView === item.view ? '#a5b4fc' : 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 500, marginBottom: 2 }}>
               {item.icon} {item.label}
             </button>
           ))}
@@ -1067,8 +1067,8 @@ export function Communication() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
           {/* Public */}
           <div style={{ padding: '10px 14px 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1.2 }}>Public</span>
-            <button onClick={() => setShowCreateChannel(true)} style={{ ...btnBase, color: 'rgba(255,255,255,0.35)', width: 18, height: 18 }}><Plus size={12} /></button>
+            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', letterSpacing: 1.2 }}>Public</span>
+            <button onClick={() => setShowCreateChannel(true)} style={{ ...btnBase, color: 'rgba(255,255,255,0.65)', width: 18, height: 18 }} aria-label="Create Channel"><Plus size={12} /></button>
           </div>
           {publicChannels.map(ch => (
             <ChannelItem key={ch.id} ch={ch} active={activeChannel?.id === ch.id} onlineCount={ch.memberIds?.filter(id => onlineUserIds.includes(id)).length}
@@ -1081,7 +1081,7 @@ export function Communication() {
           {privateChannels.length > 0 && (
             <>
               <div style={{ padding: '10px 14px 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1.2 }}>Private</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', letterSpacing: 1.2 }}>Private</span>
               </div>
               {privateChannels.map(ch => (
                 <ChannelItem key={ch.id} ch={ch} active={activeChannel?.id === ch.id} onlineCount={ch.memberIds?.filter(id => onlineUserIds.includes(id)).length}
@@ -1096,7 +1096,7 @@ export function Communication() {
           {dmChannels.length > 0 && (
             <>
               <div style={{ padding: '10px 14px 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1.2 }}>Direct Messages</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', letterSpacing: 1.2 }}>Direct Messages</span>
               </div>
               {dmChannels.map(ch => (
                 <ChannelItem key={ch.id} ch={ch} active={activeChannel?.id === ch.id} onlineCount={ch.memberIds?.filter(id => onlineUserIds.includes(id)).length}
@@ -1117,7 +1117,7 @@ export function Communication() {
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.name ?? 'User'}</p>
-            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', margin: 0, textTransform: 'capitalize' }}>{myPresence}</p>
+            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', margin: 0, textTransform: 'capitalize' }}>{myPresence}</p>
           </div>
           {showPresenceMenu && (
             <div style={{ position: 'absolute', bottom: '100%', left: 8, marginBottom: 6, background: '#fff', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.2)', padding: 6, minWidth: 160, zIndex: 60 }}>
@@ -1169,7 +1169,7 @@ export function Communication() {
                   </div>
                 ))}
                 {todos.length === 0 && (
-                  <div style={{ textAlign: 'center', padding: 40, color: '#9ca3af' }}>
+                  <div style={{ textAlign: 'center', padding: 40, color: '#71717a' }}>
                     <Check size={48} style={{ opacity: 0.2, marginBottom: 16 }} />
                     <p style={{ margin: 0 }}>Your to-do list is empty. Go extract some tasks from your chats!</p>
                   </div>
@@ -1198,18 +1198,18 @@ export function Communication() {
                       <UserPlus size={13} /> Add Member
                     </button>
                     <div style={{ width: 1, height: 20, background: '#f0f0f0', margin: '0 2px' }} />
-                    <button onClick={() => setSearchOpen(!searchOpen)} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: searchOpen ? '#eef2ff' : '#f4f4f5', color: searchOpen ? '#6366f1' : '#555' }} title='Search messages'><Search size={14} /></button>
-                    <button onClick={() => setShowPinned(!showPinned)} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: showPinned ? '#eef2ff' : '#f4f4f5', color: showPinned ? '#6366f1' : '#555' }} title='Pinned messages'><Pin size={14} /></button>
-                    <button onClick={summarizeChannel} disabled={summaryLoading} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='AI Summarize'><Sparkles size={14} /></button>
+                    <button onClick={() => setSearchOpen(!searchOpen)} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: searchOpen ? '#eef2ff' : '#f4f4f5', color: searchOpen ? '#6366f1' : '#555' }} title='Search messages' aria-label="Search messages"><Search size={14} /></button>
+                    <button onClick={() => setShowPinned(!showPinned)} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: showPinned ? '#eef2ff' : '#f4f4f5', color: showPinned ? '#6366f1' : '#555' }} title='Pinned messages' aria-label="Pinned messages"><Pin size={14} /></button>
+                    <button onClick={summarizeChannel} disabled={summaryLoading} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='AI Summarize' aria-label="AI Summarize"><Sparkles size={14} /></button>
                     <button onClick={extractTasks} disabled={tasksLoading} style={{ ...btnBase, padding: '0 10px', height: 34, borderRadius: 9, background: '#eef2ff', color: '#6366f1', fontSize: 12, fontWeight: 600 }} title='Extract Tasks'><Check size={14} style={{ marginRight: 4 }} /> Extract Tasks</button>
-                    <button onClick={() => toggleMute(activeChannel.id)} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: mutedChannels.has(activeChannel.id) ? '#fef2f2' : '#f4f4f5', color: mutedChannels.has(activeChannel.id) ? '#ef4444' : '#555' }} title={mutedChannels.has(activeChannel.id) ? 'Unmute' : 'Mute'}>{mutedChannels.has(activeChannel.id) ? <BellOff size={14} /> : <Bell size={14} />}</button>
+                    <button onClick={() => toggleMute(activeChannel.id)} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: mutedChannels.has(activeChannel.id) ? '#fef2f2' : '#f4f4f5', color: mutedChannels.has(activeChannel.id) ? '#ef4444' : '#555' }} aria-label={mutedChannels.has(activeChannel.id) ? 'Unmute' : 'Mute'} title={mutedChannels.has(activeChannel.id) ? 'Unmute' : 'Mute'}>{mutedChannels.has(activeChannel.id) ? <BellOff size={14} /> : <Bell size={14} />}</button>
                     {!inCall && (
                       <>
-                        <button onClick={() => startCall('audio')} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='Audio call'><Phone size={14} /></button>
-                        <button onClick={() => startCall('video')} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='Video call'><Video size={14} /></button>
+                        <button onClick={() => startCall('audio')} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='Audio call' aria-label="Audio call"><Phone size={14} /></button>
+                        <button onClick={() => startCall('video')} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='Video call' aria-label="Video call"><Video size={14} /></button>
                       </>
                     )}
-                    <button onClick={() => setActiveView('calendar')} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='Schedule meeting'><Calendar size={14} /></button>
+                    <button onClick={() => setActiveView('calendar')} style={{ ...btnBase, width: 34, height: 34, borderRadius: 9, background: '#f4f4f5', color: '#555' }} title='Schedule meeting' aria-label="Schedule meeting"><Calendar size={14} /></button>
                   </>
                 )}
               </div>
@@ -1228,12 +1228,12 @@ export function Communication() {
                     { fn: toggleVideo, active: isVideoOff, icon: isVideoOff ? <VideoOff size={15} /> : <Video size={15} />, label: 'Video' },
                     { fn: toggleScreenShare, active: isSharingScreen, icon: <Monitor size={15} />, label: 'Screen' },
                   ].map(({ fn, active, icon, label }) => (
-                    <button key={label} onClick={fn} title={label}
+                    <button key={label} onClick={fn} title={label} aria-label={label}
                       style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: active ? '#dc2626' : '#374151', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {icon}
                     </button>
                   ))}
-                  <button onClick={endCall} style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#dc2626', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <button onClick={endCall} aria-label="End call" style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#dc2626', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <PhoneOff size={15} />
                   </button>
                 </div>
@@ -1247,7 +1247,7 @@ export function Communication() {
                 <Search size={14} color='#aaa' />
                 <input value={searchTerm} onChange={e => handleSearch(e.target.value)} placeholder='Search messages…'
                   style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, color: '#333', background: 'none' }} autoFocus />
-                <button onClick={() => { setSearchOpen(false); setSearchTerm(''); setSearchResults([]); }} style={{ ...btnBase, color: '#aaa' }}><X size={14} /></button>
+                <button onClick={() => { setSearchOpen(false); setSearchTerm(''); setSearchResults([]); }} style={{ ...btnBase, color: '#71717a' }} aria-label="Close search"><X size={14} /></button>
               </div>
             )}
             {searchOpen && searchResults.length > 0 && (
@@ -1408,7 +1408,8 @@ export function Communication() {
                           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4, padding: '0 4px' }}>
                             {reactionsEntries.map(([emoji, userIds]) => (
                               <button key={emoji} onClick={() => toggleReaction(msg.id, emoji)}
-                                style={{ display: 'flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 20, border: (userIds as string[]).includes(user?.id || '') ? '1.5px solid #6366f1' : '1px solid #e5e7eb', background: (userIds as string[]).includes(user?.id || '') ? '#eef2ff' : '#fff', fontSize: 12, cursor: 'pointer' }}>
+                                style={{ display: 'flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 20, border: (userIds as string[]).includes(user?.id || '') ? '1.5px solid #6366f1' : '1px solid #e5e7eb', background: (userIds as string[]).includes(user?.id || '') ? '#eef2ff' : '#fff', fontSize: 12, cursor: 'pointer' }}
+                                aria-label={`Reaction ${emoji}, ${(userIds as string[]).length} people`}>
                                 {emoji} <span style={{ fontSize: 10, color: '#666' }}>{(userIds as string[]).length}</span>
                               </button>
                             ))}
@@ -1435,12 +1436,12 @@ export function Communication() {
                         {QUICK_EMOJIS.slice(0, 4).map(e => (
                           <button key={e} onClick={() => toggleReaction(msg.id, e)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, fontSize: 14 }} title={e}>{e}</button>
                         ))}
-                        <button onClick={() => setShowEmojiPicker(showEmojiPicker === msg.id ? null : msg.id)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: '#888' }} title='More reactions'><Smile size={13} /></button>
+                        <button onClick={() => setShowEmojiPicker(showEmojiPicker === msg.id ? null : msg.id)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: '#888' }} title='More reactions' aria-label="More reactions"><Smile size={13} /></button>
                         <div style={{ width: 1, background: '#e5e7eb', margin: '2px 1px' }} />
-                        <button onClick={() => setReplyTo(msg)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: '#888' }} title='Reply'><Reply size={13} /></button>
-                        <button onClick={() => translateMsg(msg.id, msg.content)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: translations[msg.id] ? '#6366f1' : '#888' }} title='Translate'><Globe size={13} /></button>
-                        <button onClick={() => togglePin(msg.id)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: msg.isPinned ? '#f59e0b' : '#888' }} title={msg.isPinned ? 'Unpin' : 'Pin'}><Pin size={13} /></button>
-                        <button onClick={() => setForwardingMsg(msg)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: '#888' }} title='Forward'><Forward size={13} /></button>
+                        <button onClick={() => setReplyTo(msg)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: '#888' }} title='Reply' aria-label="Reply"><Reply size={13} /></button>
+                        <button onClick={() => translateMsg(msg.id, msg.content)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: translations[msg.id] ? '#6366f1' : '#888' }} title='Translate' aria-label="Translate"><Globe size={13} /></button>
+                        <button onClick={() => togglePin(msg.id)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: msg.isPinned ? '#f59e0b' : '#888' }} title={msg.isPinned ? 'Unpin' : 'Pin'} aria-label={msg.isPinned ? 'Unpin message' : 'Pin message'}><Pin size={13} /></button>
+                        <button onClick={() => setForwardingMsg(msg)} style={{ ...btnBase, width: 28, height: 28, borderRadius: 6, color: '#888' }} title='Forward' aria-label="Forward message"><Forward size={13} /></button>
                       </div>
                     )}
 
@@ -1493,32 +1494,36 @@ export function Communication() {
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#4338ca' }}>{replyTo.senderName}</span>
                     <p style={{ fontSize: 11, color: '#666', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{replyTo.content.slice(0, 80)}</p>
                   </div>
-                  <button onClick={() => setReplyTo(null)} style={{ ...btnBase, color: '#888' }}><X size={14} /></button>
+                  <button onClick={() => setReplyTo(null)} style={{ ...btnBase, color: '#888' }} aria-label="Cancel reply"><X size={14} /></button>
                 </div>
               )}
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
                 <div style={{ flex: 1, background: '#f9f9fb', border: '1.5px solid #eaecf0', borderRadius: 14, padding: '10px 14px', transition: 'border .15s' }}>
                   <input value={input} onChange={e => handleTyping(e.target.value)} onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
                     placeholder={activeChannel ? `Message #${activeChannel.name}…` : 'Select a channel first'}
+                    aria-label={activeChannel ? `Message #${activeChannel.name}` : 'Message input'}
                     disabled={!activeChannel}
                     style={{ width: '100%', background: 'none', border: 'none', outline: 'none', fontSize: 13, color: '#222', resize: 'none' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, paddingTop: 8, borderTop: '1px solid #f0f0f0' }}>
                     {[{ icon: <Smile size={15} />, label: 'Emoji', action: () => {} }, { icon: <Paperclip size={15} />, label: 'Attach', action: () => fileInputRef.current?.click() }, { icon: <AtSign size={15} />, label: 'Mention', action: () => {} }].map(({ icon, label, action }) => (
-                      <button key={label} title={label} onClick={action} style={{ ...btnBase, color: '#bbb' }}>{icon}</button>
+                      <button key={label} title={label} onClick={action} style={{ ...btnBase, color: '#bbb' }} aria-label={label}>{icon}</button>
                     ))}
                     <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
                       {/* AI Tone Enhancer */}
                       <button title='AI Tone Enhancer' onClick={enhanceTone} disabled={isEnhancing || !input.trim()}
+                        aria-label="AI Tone Enhancer"
                         style={{ ...btnBase, width: 30, height: 30, borderRadius: 8, background: '#f0f0ff', color: isEnhancing ? '#bbb' : '#6366f1' }}>
                         <Sparkles size={14} className={isEnhancing ? "animate-pulse" : ""} />
                       </button>
                       {/* Voice recording */}
                       <button title={isRecording ? 'Stop recording' : 'Voice message'}
                         onClick={isRecording ? stopRecording : startRecording}
+                        aria-label={isRecording ? 'Stop voice recording' : 'Start voice message'}
                         style={{ ...btnBase, width: 30, height: 30, borderRadius: 8, background: isRecording ? '#fef2f2' : '#f0f0ff', color: isRecording ? '#ef4444' : '#6366f1', animation: isRecording ? 'pulse 1.5s infinite' : 'none' }}>
                         {isRecording ? <Square size={12} /> : <Mic size={14} />}
                       </button>
                       <button title='Schedule message' onClick={() => setActiveView('calendar')}
+                        aria-label="Schedule message"
                         style={{ ...btnBase, width: 30, height: 30, borderRadius: 8, background: '#f0f0ff', color: '#6366f1' }}>
                         <AlarmClock size={14} />
                       </button>
@@ -1529,6 +1534,7 @@ export function Communication() {
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadFile(f); e.target.value = ''; }} />
                 </div>
                 <button onClick={sendMessage} disabled={!input.trim() || !activeChannel}
+                  aria-label="Send message"
                   style={{ width: 42, height: 42, borderRadius: 13, background: input.trim() ? '#6366f1' : '#e5e7eb', border: 'none', color: '#fff', cursor: input.trim() ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background .2s' }}>
                   <Send size={15} />
                 </button>
@@ -1595,11 +1601,11 @@ function ChannelItem({ ch, active, onlineCount, menuOpen, onMenuToggle, onJoin, 
     <div style={{ position: 'relative', margin: '1px 6px' }}>
       <div style={{ display: 'flex', alignItems: 'center', borderRadius: 8, background: active ? 'rgba(99,102,241,0.22)' : 'transparent', transition: 'background .12s' }}>
         <button onClick={onJoin} style={{ flex: 1, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 8px', display: 'flex', alignItems: 'center', gap: 7, textAlign: 'left' as const }}>
-          <span style={{ color: active ? '#a5b4fc' : 'rgba(255,255,255,0.35)', flexShrink: 0 }}>{ch.type === 'private' ? <Lock size={12} /> : <Hash size={12} />}</span>
-          <span style={{ fontSize: 13, fontWeight: active ? 600 : 400, color: active ? '#e0e7ff' : 'rgba(255,255,255,0.55)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ch.name}</span>
-          {onlineCount > 0 && <span style={{ marginLeft: 'auto', fontSize: 10, color: 'rgba(52,211,153,0.7)', fontWeight: 600 }}>{onlineCount}</span>}
+          <span style={{ color: active ? '#a5b4fc' : 'rgba(255,255,255,0.5)', flexShrink: 0 }}>{ch.type === 'private' ? <Lock size={12} /> : <Hash size={12} />}</span>
+          <span style={{ fontSize: 13, fontWeight: active ? 600 : 400, color: active ? '#e0e7ff' : 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ch.name}</span>
+          {onlineCount > 0 && <span style={{ marginLeft: 'auto', fontSize: 10, color: 'rgba(52,211,153,0.9)', fontWeight: 600 }}>{onlineCount}</span>}
         </button>
-        <button onClick={onMenuToggle} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px 6px', color: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', borderRadius: 6, opacity: menuOpen ? 1 : 0 }} className='channel-menu-btn'>
+        <button onClick={onMenuToggle} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px 6px', color: menuOpen ? '#fff' : 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', borderRadius: 6, opacity: menuOpen ? 1 : 0 }} className='channel-menu-btn' aria-label="Channel settings">
           <MoreHorizontal size={13} />
         </button>
       </div>

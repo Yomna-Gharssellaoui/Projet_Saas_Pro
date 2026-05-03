@@ -614,17 +614,19 @@ export function Invoices() {
               />
             </div>
 
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => {
-                setStatusFilter(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full xl:w-[180px]">
-                <Filter className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
+            <div className="flex flex-col gap-1.5 w-full xl:w-[180px]">
+              <label htmlFor="status-filter" className="text-xs font-medium text-muted-foreground ml-1">Status</label>
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => {
+                  setStatusFilter(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger id="status-filter" className="w-full" aria-label="Filter by status">
+                  <Filter className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
@@ -635,12 +637,15 @@ export function Invoices() {
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
+          </div>
 
-            <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-              <SelectTrigger className="w-full xl:w-[220px]">
-                <ArrowUpDown className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
+            <div className="flex flex-col gap-1.5 w-full xl:w-[220px]">
+              <label htmlFor="sort-by" className="text-xs font-medium text-muted-foreground ml-1">Sort Order</label>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                <SelectTrigger id="sort-by" className="w-full" aria-label="Sort by">
+                  <ArrowUpDown className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest</SelectItem>
                 <SelectItem value="oldest">Oldest</SelectItem>
@@ -652,17 +657,20 @@ export function Invoices() {
                 <SelectItem value="client_desc">Client: Z → A</SelectItem>
               </SelectContent>
             </Select>
+          </div>
 
-            <Select
-              value={pageSize}
-              onValueChange={(value) => {
-                setPageSize(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full xl:w-[120px]">
-                <SelectValue placeholder="Rows" />
-              </SelectTrigger>
+            <div className="flex flex-col gap-1.5 w-full xl:w-[120px]">
+              <label htmlFor="page-size" className="text-xs font-medium text-muted-foreground ml-1">Rows</label>
+              <Select
+                value={pageSize}
+                onValueChange={(value) => {
+                  setPageSize(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger id="page-size" className="w-full" aria-label="Rows per page">
+                  <SelectValue placeholder="Rows" />
+                </SelectTrigger>
               <SelectContent>
                 <SelectItem value="5">5 / page</SelectItem>
                 <SelectItem value="10">10 / page</SelectItem>
@@ -670,11 +678,14 @@ export function Invoices() {
                 <SelectItem value="50">50 / page</SelectItem>
               </SelectContent>
             </Select>
+          </div>
 
-            <Button variant="outline" onClick={resetFilters}>
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Reset
-            </Button>
+            <div className="flex items-end">
+              <Button variant="outline" onClick={resetFilters} className="h-9">
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -716,14 +727,15 @@ export function Invoices() {
                 <TableRow>
                   {canManageInvoices && (
                     <TableHead className="w-[50px]">
-                      <input
-                        type="checkbox"
-                        checked={
-                          paginatedInvoices.length > 0 &&
-                          paginatedInvoices.every((inv) => selectedIds.includes(inv.id))
-                        }
-                        onChange={toggleSelectAllCurrentPage}
-                      />
+                        <input
+                          type="checkbox"
+                          aria-label="Select all invoices on this page"
+                          checked={
+                            paginatedInvoices.length > 0 &&
+                            paginatedInvoices.every((inv) => selectedIds.includes(inv.id))
+                          }
+                          onChange={toggleSelectAllCurrentPage}
+                        />
                     </TableHead>
                   )}
                   <TableHead>Invoice #</TableHead>
@@ -785,6 +797,7 @@ export function Invoices() {
                           <TableCell>
                             <input
                               type="checkbox"
+                              aria-label={`Select invoice ${invoice.invoiceNumber}`}
                               checked={selectedIds.includes(invoice.id)}
                               onChange={() => toggleSelectOne(invoice.id)}
                             />
@@ -813,7 +826,14 @@ export function Invoices() {
 
                         <TableCell className="min-w-[140px]">
                           <div className="space-y-1">
-                            <div className="h-2 w-full rounded-full bg-muted">
+                            <div 
+                              className="h-2 w-full rounded-full bg-muted"
+                              role="progressbar"
+                              aria-valuenow={progress}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                              aria-label={`Payment progress: ${progress.toFixed(0)}%`}
+                            >
                               <div
                                 className="h-2 rounded-full bg-gray-900 transition-all"
                                 style={{ width: `${progress}%` }}
@@ -830,6 +850,7 @@ export function Invoices() {
                               size="sm"
                               onClick={() => navigate(`/dashboard/invoices/${invoice.id}`)}
                               title="View invoice"
+                              aria-label={`View invoice ${invoice.invoiceNumber}`}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -839,6 +860,7 @@ export function Invoices() {
                               size="sm"
                               onClick={() => handleDownloadPDF(invoice.id)}
                               title="Download PDF"
+                              aria-label={`Download PDF for invoice ${invoice.invoiceNumber}`}
                             >
                               <Download className="h-4 w-4" />
                             </Button>
@@ -853,6 +875,7 @@ export function Invoices() {
                                   )
                                 }
                                 title="View invoice risk"
+                                aria-label={`View risk analysis for invoice ${invoice.invoiceNumber}`}
                               >
                                 <ShieldAlert className="h-4 w-4" />
                               </Button>
@@ -865,6 +888,7 @@ export function Invoices() {
                                 disabled={updatingId === invoice.id}
                                 onClick={() => handleChangeStatus(invoice.id, 'sent')}
                                 title="Send invoice"
+                                aria-label={`Send invoice ${invoice.invoiceNumber} to client`}
                               >
                                 <Send className="h-4 w-4" />
                               </Button>
@@ -877,6 +901,7 @@ export function Invoices() {
                                 disabled={updatingId === invoice.id}
                                 onClick={() => handleChangeStatus(invoice.id, 'paid')}
                                 title="Mark as paid"
+                                aria-label={`Mark invoice ${invoice.invoiceNumber} as paid`}
                               >
                                 <CheckCircle className="h-4 w-4" />
                               </Button>
@@ -889,6 +914,7 @@ export function Invoices() {
                                 disabled={updatingId === invoice.id}
                                 onClick={() => handleChangeStatus(invoice.id, 'cancelled')}
                                 title="Cancel invoice"
+                                aria-label={`Cancel invoice ${invoice.invoiceNumber}`}
                               >
                                 <XCircle className="h-4 w-4" />
                               </Button>

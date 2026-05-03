@@ -131,6 +131,10 @@ export function PlatformAdminLayout() {
     setSidebarOpen(false);
   };
 
+  useEffect(() => {
+    document.documentElement.lang = "en";
+  }, []);
+
   const SideNav = ({ mobile = false }: { mobile?: boolean }) => (
     <div className="flex h-full flex-col bg-card">
       <div className="flex h-16 items-center justify-between border-b border-border px-4">
@@ -147,12 +151,15 @@ export function PlatformAdminLayout() {
         </div>
 
         {mobile ? (
-          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}><X className="h-5 w-5" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} aria-label="Close sidebar">
+            <X className="h-5 w-5" />
+          </Button>
         ) : (
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             className="hidden lg:flex"
           >
             {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
@@ -209,6 +216,12 @@ export function PlatformAdminLayout() {
 
   return (
     <div className="min-h-screen bg-background/50">
+      <a
+        href="#admin-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-red-600 focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {/* Mobile Drawer */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -228,7 +241,7 @@ export function PlatformAdminLayout() {
       <div className={`transition-all duration-300 ${sidebarCollapsed ? "lg:pl-24" : "lg:pl-80"}`}>
         <header className="sticky top-0 z-20 h-16 border-b border-border bg-card/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(true)}>
+            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
               <Menu className="h-5 w-5" />
             </Button>
             <div className="hidden sm:block">
@@ -251,14 +264,14 @@ export function PlatformAdminLayout() {
                   <p className="text-[10px] text-muted-foreground mt-1 font-medium italic">{adminEmail}</p>
                </div>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full bg-card border border-border relative">
+            <Button variant="ghost" size="icon" className="rounded-full bg-card border border-border relative" aria-label="Notifications">
                <Bell className="h-4 w-4" />
                <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full border-2 border-white" />
             </Button>
           </div>
         </header>
 
-        <main className="p-4 sm:p-8">
+        <main id="admin-main-content" className="p-4 sm:p-8 focus:outline-none" tabIndex={-1}>
            <div className="max-w-7xl mx-auto">
               <Outlet />
            </div>

@@ -488,6 +488,7 @@ export function Clients() {
               className="h-11 rounded-xl border-border px-4"
               onClick={loadClients}
               disabled={isLoading}
+              aria-label="Actualiser la liste des clients"
             >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -501,6 +502,7 @@ export function Clients() {
               variant="outline"
               className="h-11 rounded-xl border-border px-4"
               onClick={exportCSV}
+              aria-label="Exporter la liste des clients en CSV"
             >
               <Download className="mr-2 h-4 w-4" />
               Export
@@ -514,7 +516,7 @@ export function Clients() {
               }}
             >
               <DialogTrigger asChild>
-                <Button className="h-11 rounded-xl px-5 shadow-sm">
+                <Button className="h-11 rounded-xl px-5 shadow-sm" aria-label="Ouvrir le formulaire pour ajouter un nouveau client">
                   <Plus className="mr-2 h-4 w-4" />
                   New Client
                 </Button>
@@ -543,15 +545,15 @@ export function Clients() {
                       </div>
 
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label>Client type *</Label>
+                        <div className="space-y-2 flex flex-col">
+                          <Label htmlFor="client-type">Client type *</Label>
                           <Select
                             value={newClient.type}
                             onValueChange={(value) =>
                               handleFieldChange("type", value as ClientType)
                             }
                           >
-                            <SelectTrigger className="h-11 rounded-xl">
+                            <SelectTrigger id="client-type" className="h-11 rounded-xl" aria-label="Select client type">
                               <SelectValue placeholder="Choose type" />
                             </SelectTrigger>
                             <SelectContent>
@@ -922,12 +924,13 @@ export function Clients() {
             />
           </div>
 
-          <div className="w-full xl:w-[220px]">
+          <div className="flex flex-col gap-1.5 w-full xl:w-[220px]">
+            <label htmlFor="client-status" className="text-xs font-medium text-muted-foreground ml-1">Status</label>
             <Select
               value={statusFilter}
               onValueChange={(value) => setStatusFilter(value as ClientStatusFilter)}
             >
-              <SelectTrigger className="h-12 rounded-xl border-border">
+              <SelectTrigger id="client-status" className="h-12 rounded-xl border-border" aria-label="Filter by status">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -938,12 +941,13 @@ export function Clients() {
             </Select>
           </div>
 
-          <div className="w-full xl:w-[220px]">
+          <div className="flex flex-col gap-1.5 w-full xl:w-[220px]">
+            <label htmlFor="client-sort" className="text-xs font-medium text-muted-foreground ml-1">Sort order</label>
             <Select
               value={sortBy}
               onValueChange={(value) => setSortBy(value as SortOption)}
             >
-              <SelectTrigger className="h-12 rounded-xl border-border">
+              <SelectTrigger id="client-sort" className="h-12 rounded-xl border-border" aria-label="Sort by">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -1119,6 +1123,7 @@ export function Clients() {
                             onClick={() =>
                               navigate(`/dashboard/invoices/create?clientId=${client.id}`)
                             }
+                            aria-label={`Créer une facture pour ${client.name}`}
                           >
                             <FileText className="mr-2 h-4 w-4" />
                             Invoice
@@ -1128,6 +1133,7 @@ export function Clients() {
                             size="sm"
                             className="rounded-xl"
                             onClick={() => navigate(`/dashboard/clients/${client.id}`)}
+                            aria-label={`Voir les détails de ${client.name}`}
                           >
                             View
                             <ChevronRight className="ml-2 h-4 w-4" />

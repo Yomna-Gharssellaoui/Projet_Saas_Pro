@@ -12,7 +12,7 @@ import {
 } from "../../../app/components/ui/card";
 import { toast } from "sonner";
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || "http://localhost:3000/api";
+const API_BASE = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001/api";
 
 async function apiPost(path: string, body: object) {
   const res = await fetch(`${API_BASE}${path}`, {

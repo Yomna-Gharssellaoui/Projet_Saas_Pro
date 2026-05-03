@@ -1,0 +1,49 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'Front-End/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'Front-End/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Front-End
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: 'Front-End/package-lock.json'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build
+      run: npm run build
+
+    - name: Run unit tests
+      run: npm run test
+
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+        projectBaseDir: Front-End
+        args: >
+          -Dsonar.projectKey=erp-frontend
+          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.tsx

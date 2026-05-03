@@ -37,6 +37,7 @@ export function AIAssistant() {
       {/* Floating AI Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Open AI Assistant"
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 z-40"
       >
         <Sparkles className="h-6 w-6" />
@@ -53,8 +54,9 @@ export function AIAssistant() {
             </div>
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => setIsOpen(false)}
+              aria-label="Close AI Assistant"
               className="text-white hover:bg-card/20"
             >
               <X className="h-4 w-4" />

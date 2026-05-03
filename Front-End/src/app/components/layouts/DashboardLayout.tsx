@@ -73,6 +73,12 @@ export function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {/* Sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-card border-r border-border pt-5 pb-4 overflow-y-auto">
@@ -85,7 +91,10 @@ export function DashboardLayout() {
           <div className="px-4 mb-6">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="w-full bg-muted rounded-lg p-3 border border-border hover:bg-accent transition-colors">
+                <button 
+                  className="w-full bg-muted rounded-lg p-3 border border-border hover:bg-accent transition-colors"
+                  aria-label="Select business"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0 text-left">
                       <p className="text-xs text-muted-foreground mb-1">Current Business</p>
@@ -130,7 +139,7 @@ export function DashboardLayout() {
                   key={item.name}
                   onClick={() => navigate(item.href)}
                   className={`
-                    w-full group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
+                    w-full group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-colors
                     ${
                       active
                         ? "bg-primary/10 text-primary"
@@ -161,6 +170,7 @@ export function DashboardLayout() {
               <button
                 className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                 onClick={() => setSidebarOpen(false)}
+                aria-label="Close sidebar"
               >
                 <X className="h-6 w-6 text-white" />
               </button>
@@ -182,7 +192,7 @@ export function DashboardLayout() {
                         setSidebarOpen(false);
                       }}
                       className={`
-                        w-full group flex items-center px-3 py-2 text-sm font-medium rounded-md
+                        w-full group flex items-center px-3 py-3 text-sm font-medium rounded-md
                         ${
                           active
                             ? "bg-primary/10 text-primary"
@@ -213,6 +223,7 @@ export function DashboardLayout() {
           <button
             className="px-4 border-r border-border text-muted-foreground focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary lg:hidden"
             onClick={() => setSidebarOpen(true)}
+            aria-label="Open sidebar"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -222,7 +233,7 @@ export function DashboardLayout() {
               {/* User menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-3">
+                  <Button variant="ghost" className="flex items-center space-x-3" aria-label="User menu">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-indigo-100 text-indigo-600">
                         {currentUser.name.split(" ").map(n => n[0]).join("")}
@@ -254,7 +265,7 @@ export function DashboardLayout() {
         </div>
 
         {/* Page content */}
-        <main className="flex-1">
+        <main id="main-content" className="flex-1 focus:outline-none" tabIndex={-1}>
           <div className="py-6 px-4 sm:px-6 lg:px-8">
             <Outlet />
           </div>

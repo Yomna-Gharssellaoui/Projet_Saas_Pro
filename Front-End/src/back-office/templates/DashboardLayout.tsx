@@ -220,10 +220,20 @@ export function DashboardLayout() {
     }
   }, [authReady, user]);
 
+  useEffect(() => {
+    document.documentElement.lang = "en";
+  }, []);
+
   const desktopSidebarWidth = sidebarCollapsed ? 'lg:pl-24' : 'lg:pl-72';
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <a
+        href="#dashboard-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -245,9 +255,10 @@ export function DashboardLayout() {
 
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={() => setSidebarOpen(false)}
                 className="rounded-xl"
+                aria-label="Close sidebar"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -329,9 +340,10 @@ export function DashboardLayout() {
 
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => setSidebarCollapsed((v) => !v)}
             className="rounded-xl"
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {sidebarCollapsed ? (
               <PanelLeftOpen className="h-5 w-5" />
@@ -365,6 +377,7 @@ export function DashboardLayout() {
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                   ].join(' ')}
                   title={item.name}
+                  aria-label={item.name}
                 >
                   <item.icon className="h-5 w-5 shrink-0" />
 
@@ -421,8 +434,10 @@ export function DashboardLayout() {
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
+                size="icon"
                 className="rounded-xl lg:hidden"
                 onClick={() => setSidebarOpen(true)}
+                aria-label="Open sidebar"
               >
                 <Menu className="h-6 w-6" />
               </Button>
@@ -439,6 +454,7 @@ export function DashboardLayout() {
               <button
                 type="button"
                 onClick={() => setUserMenuOpen((v) => !v)}
+                aria-label="User menu"
                 className="flex items-center gap-3 rounded-2xl border border-border bg-card px-3 py-2 shadow-sm transition hover:border-border hover:shadow-md"
               >
                 <Avatar className="h-10 w-10 ring-2 ring-border">
@@ -508,7 +524,7 @@ export function DashboardLayout() {
         </header>
 
         {/* Content */}
-        <main className="min-h-[calc(100vh-5rem)] bg-background">
+        <main id="dashboard-main-content" className="min-h-[calc(100vh-5rem)] bg-background focus:outline-none" tabIndex={-1}>
           <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
             <div className="min-h-[calc(100vh-9rem)] rounded-[28px] border border-border bg-card p-4 shadow-sm sm:p-6 lg:p-8">
               <Outlet />

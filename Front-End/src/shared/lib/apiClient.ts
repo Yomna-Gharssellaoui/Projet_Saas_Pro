@@ -1,7 +1,7 @@
 const BASE =
   import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_BACKEND_URL ||
-  "http://localhost:3000/api";
+  "http://localhost:3001/api";
 
 export function getToken() {
   return localStorage.getItem("access_token");

@@ -31,7 +31,7 @@ export function BusinessSwitcher() {
           window.dispatchEvent(new Event("business-changed"));
         }}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full" aria-label="Select business">
           <SelectValue placeholder="Select business">
             {currentBusiness ? currentBusiness.name : "Select business"}
           </SelectValue>

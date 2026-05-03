@@ -334,17 +334,20 @@ export function Reports() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Select value={period} onValueChange={(v) => setPeriod(v as PeriodValue)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1month">Last Month</SelectItem>
-              <SelectItem value="3months">Last 3 Months</SelectItem>
-              <SelectItem value="6months">Last 6 Months</SelectItem>
-              <SelectItem value="1year">Last Year</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="period-filter" className="text-xs font-medium text-muted-foreground ml-1">Period</label>
+            <Select value={period} onValueChange={(v) => setPeriod(v as PeriodValue)}>
+              <SelectTrigger id="period-filter" className="w-[180px]" aria-label="Select report period">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1month">Last Month</SelectItem>
+                <SelectItem value="3months">Last 3 Months</SelectItem>
+                <SelectItem value="6months">Last 6 Months</SelectItem>
+                <SelectItem value="1year">Last Year</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           <Button variant="outline" onClick={handleExportPDF}>
             <Download className="mr-2 h-4 w-4" />
@@ -444,7 +447,7 @@ export function Reports() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={monthlyData}>
+                  <LineChart data={monthlyData} aria-label="Profit and Loss Trend line chart">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
@@ -487,7 +490,7 @@ export function Reports() {
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
+                    <PieChart aria-label="Expense Breakdown by Category pie chart">
                       <Pie
                         data={expenseByCategory}
                         cx="50%"
@@ -519,7 +522,7 @@ export function Reports() {
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={revenueByClient} layout="vertical">
+                    <BarChart data={revenueByClient} layout="vertical" aria-label="Revenue by Client (Top 5) bar chart">
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis type="number" />
                       <YAxis dataKey="name" type="category" width={150} />
@@ -537,7 +540,7 @@ export function Reports() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={monthlyData}>
+                  <BarChart data={monthlyData} aria-label="Monthly Revenue vs Expenses bar chart">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />

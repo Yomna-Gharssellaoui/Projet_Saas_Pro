@@ -36,7 +36,7 @@ KEYWORD_RULES = [
     (r"\boverdue\b|\bpast.?due\b|\bexpired\b|\béchu",    "overdue"),
     (r"\bflagged?\b|\banomaly\b|\banomalie\b|\bsuspect", "flagged_anomaly"),
     (r"\bhigh.?risk\b|\brisque\b|\bbad.?credit\b",       "high_risk_clients"),
-    (r"\bbiggest\b|\blargest\b|\btop.?\d*.?unpaid\b",    "top_unpaid"),
+    (r"\bbiggest\b|\blargest\b|\btop.?\d*.?unpaid\b|\bowe\b|\bdue\b|\bdebt\b|\bdoit\b", "top_unpaid"),
     (r"\bpredict\b|\bwill.*pay\b|\brisk score\b",        "payment_prediction"),
     (r"\boverview\b|\bdashboard\b|\bsummary\b|\btotal\b","stats_overview"),
     (r"\blate.?rate\b|\bpercent.*late\b",                "late_rate"),

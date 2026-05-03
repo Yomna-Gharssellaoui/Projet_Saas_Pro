@@ -10,7 +10,10 @@
     "desktop": "concurrently \"npm run frontend\" \"npm run electron\"",
     "frontend": "vite",
     "dist": "npm run build && electron-builder",
-    "dev": "vite"
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "build": {
     "electronVersion": "30.0.0",
@@ -89,7 +92,12 @@
     "electron": "^41.3.0",
     "electron-builder": "^26.8.1",
     "tailwindcss": "4.1.12",
-    "vite": "6.3.5"
+    "vite": "6.3.5",
+    "vitest": "^2.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "jsdom": "^24.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/jest-dom": "^6.4.0"
   },
   "peerDependencies": {
     "react": "18.3.1",

@@ -459,7 +459,10 @@ export function Dashboard() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={monthlyTrendData}>
+                  <LineChart 
+                    data={monthlyTrendData}
+                    aria-label="Revenue and Expenses trend over the last 6 months"
+                  >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
@@ -495,7 +498,7 @@ export function Dashboard() {
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
+                    <PieChart aria-label="Invoice status distribution chart">
                       <Pie
                         data={invoiceStatusData}
                         cx="50%"
@@ -618,6 +621,7 @@ export function Dashboard() {
                   size="sm"
                   onClick={() => navigate("/dashboard/invoices")}
                   className="text-indigo-600"
+                  aria-label="View all invoices"
                 >
                   View All <ArrowUpRight className="ml-1 h-4 w-4" />
                 </Button>
@@ -675,6 +679,7 @@ export function Dashboard() {
                   size="sm"
                   onClick={() => navigate("/dashboard/clients")}
                   className="text-indigo-600"
+                  aria-label="View all clients"
                 >
                   View All <ArrowUpRight className="ml-1 h-4 w-4" />
                 </Button>

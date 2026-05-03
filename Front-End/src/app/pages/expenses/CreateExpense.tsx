@@ -346,7 +346,7 @@ export function CreateExpense() {
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium text-foreground">
+                      <Label htmlFor="category" className="text-sm font-medium text-foreground">
                         Catégorie *
                       </Label>
                       <Select
@@ -357,6 +357,7 @@ export function CreateExpense() {
                         }}
                       >
                         <SelectTrigger
+                          id="category"
                           className={`h-11 rounded-xl border-border bg-card ${
                             errors.category ? inputErrorClass : ""
                           }`}
@@ -379,10 +380,11 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium text-foreground">
+                      <Label htmlFor="amount" className="text-sm font-medium text-foreground">
                         Montant ({currency}) *
                       </Label>
                       <Input
+                        id="amount"
                         type="number"
                         min="0"
                         step="0.01"
@@ -405,10 +407,11 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium text-foreground">
+                      <Label htmlFor="vendor" className="text-sm font-medium text-foreground">
                         Fournisseur
                       </Label>
                       <Input
+                        id="vendor"
                         placeholder="Ex: Office Depot"
                         value={vendor}
                         onChange={(e) => {
@@ -428,7 +431,7 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium text-foreground">
+                      <Label htmlFor="paymentMethod" className="text-sm font-medium text-foreground">
                         Méthode de paiement *
                       </Label>
                       <Select
@@ -439,6 +442,7 @@ export function CreateExpense() {
                         }}
                       >
                         <SelectTrigger
+                          id="paymentMethod"
                           className={`h-11 rounded-xl border-border bg-card ${
                             errors.paymentMethod ? inputErrorClass : ""
                           }`}
@@ -461,12 +465,13 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
-                      <Label className="text-sm font-medium text-foreground">
+                      <Label htmlFor="date" className="text-sm font-medium text-foreground">
                         Date *
                       </Label>
                       <div className="relative">
                         <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
+                          id="date"
                           type="date"
                           value={date}
                           onChange={(e) => {
@@ -498,10 +503,11 @@ export function CreateExpense() {
 
                 <CardContent>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-foreground">
+                    <Label htmlFor="description" className="text-sm font-medium text-foreground">
                       Détails de la dépense *
                     </Label>
                     <Textarea
+                      id="description"
                       placeholder="Ex: Achat de fournitures de bureau pour l’équipe finance..."
                       value={description}
                       onChange={(e) => {
@@ -599,6 +605,7 @@ export function CreateExpense() {
                           variant="ghost"
                           size="icon"
                           onClick={removeReceipt}
+                          aria-label="Remove receipt"
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -608,7 +615,7 @@ export function CreateExpense() {
                         <div className="mt-4 overflow-hidden rounded-xl border bg-card">
                           <img
                             src={receiptPreviewUrl}
-                            alt="Preview"
+                            alt="Receipt preview"
                             className="max-h-80 w-full object-contain"
                           />
                         </div>

@@ -547,30 +547,31 @@ export function Team() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="member-role">Role</Label>
-                    <Select
-                      value={newMember.role}
-                      onValueChange={(value) => handleRoleChange(value as RoleType)}
-                    >
-                      <SelectTrigger
-                        id="member-role"
-                        className={
-                          touched.role && errors.role
-                            ? "border-red-500 focus:ring-red-500"
-                            : ""
-                        }
+                    <div className="space-y-2 flex flex-col">
+                      <Label htmlFor="member-role">Role</Label>
+                      <Select
+                        value={newMember.role}
+                        onValueChange={(value) => handleRoleChange(value as RoleType)}
                       >
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="business_admin">
-                          Business Administrator
-                        </SelectItem>
-                        <SelectItem value="accountant">Accountant</SelectItem>
-                        <SelectItem value="team_member">Team Member</SelectItem>
-                      </SelectContent>
-                    </Select>
+                        <SelectTrigger
+                          id="member-role"
+                          aria-label="Select member role"
+                          className={
+                            touched.role && errors.role
+                              ? "border-red-500 focus:ring-red-500"
+                              : ""
+                          }
+                        >
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="business_admin">
+                            Business Administrator
+                          </SelectItem>
+                          <SelectItem value="accountant">Accountant</SelectItem>
+                          <SelectItem value="team_member">Team Member</SelectItem>
+                        </SelectContent>
+                      </Select>
 
                     {touched.role && errors.role && (
                       <p className="flex items-center gap-1 text-xs text-red-600">
@@ -761,9 +762,10 @@ export function Team() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="w-full lg:w-[220px]">
+              <div className="w-full lg:w-[220px] flex flex-col gap-1.5">
+                <label htmlFor="role-filter" className="text-xs font-medium text-muted-foreground ml-1">Role</label>
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger id="role-filter" aria-label="Filter by role">
                     <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
                     <SelectValue placeholder="Filter by role" />
                   </SelectTrigger>
@@ -776,9 +778,10 @@ export function Team() {
                 </Select>
               </div>
 
-              <div className="w-full lg:w-[180px]">
+              <div className="w-full lg:w-[180px] flex flex-col gap-1.5">
+                <label htmlFor="status-filter" className="text-xs font-medium text-muted-foreground ml-1">Status</label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger id="status-filter" aria-label="Filter by status">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -890,6 +893,7 @@ export function Team() {
                             disabled={removingId === member.id}
                             onClick={() => handleRemoveMember(member.id)}
                             className="text-red-600 hover:text-red-700"
+                            aria-label={`Remove ${member.name} from team`}
                           >
                             {removingId === member.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />

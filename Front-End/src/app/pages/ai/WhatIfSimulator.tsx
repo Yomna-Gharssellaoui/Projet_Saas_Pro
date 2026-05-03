@@ -233,20 +233,21 @@ export function WhatIfSimulator() {
         </CardHeader>
         <CardContent>
           <div className="mb-3 flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => applyPreset('conservative')}>
+            <Button variant="outline" size="sm" onClick={() => applyPreset('conservative')} aria-label="Apply Conservative preset">
               Conservative
             </Button>
-            <Button variant="outline" size="sm" onClick={() => applyPreset('base')}>
+            <Button variant="outline" size="sm" onClick={() => applyPreset('base')} aria-label="Apply Base preset">
               Base
             </Button>
-            <Button variant="outline" size="sm" onClick={() => applyPreset('aggressive')}>
+            <Button variant="outline" size="sm" onClick={() => applyPreset('aggressive')} aria-label="Apply Aggressive preset">
               Aggressive
             </Button>
           </div>
           <div className="grid gap-3 md:grid-cols-5">
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Horizon (days)</label>
+              <label htmlFor="horizon-select" className="mb-1 block text-xs text-muted-foreground">Horizon (days)</label>
               <select
+                id="horizon-select"
                 value={horizon}
                 className="w-full rounded-md border border-border px-3 py-2 text-sm"
                 onChange={(e) => setHorizon(Number(e.target.value) as Horizon)}
@@ -257,8 +258,9 @@ export function WhatIfSimulator() {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Collection acceleration %</label>
+              <label htmlFor="acceleration-input" className="mb-1 block text-xs text-muted-foreground">Collection acceleration %</label>
               <input
+                id="acceleration-input"
                 type="number"
                 min={0}
                 max={100}
@@ -268,8 +270,9 @@ export function WhatIfSimulator() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Collection delay %</label>
+              <label htmlFor="delay-input" className="mb-1 block text-xs text-muted-foreground">Collection delay %</label>
               <input
+                id="delay-input"
                 type="number"
                 min={0}
                 max={100}
@@ -279,8 +282,9 @@ export function WhatIfSimulator() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Expense reduction %</label>
+              <label htmlFor="reduction-input" className="mb-1 block text-xs text-muted-foreground">Expense reduction %</label>
               <input
+                id="reduction-input"
                 type="number"
                 min={0}
                 max={100}
@@ -290,8 +294,9 @@ export function WhatIfSimulator() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">Expense increase %</label>
+              <label htmlFor="increase-input" className="mb-1 block text-xs text-muted-foreground">Expense increase %</label>
               <input
+                id="increase-input"
                 type="number"
                 min={0}
                 max={100}
@@ -309,8 +314,10 @@ export function WhatIfSimulator() {
           </div>
           <div className="mt-4 grid gap-2 md:grid-cols-[1fr_auto_auto]">
             <input
+              id="scenario-name-input"
               className="w-full rounded-md border border-border px-3 py-2 text-sm"
               placeholder="Scenario name (e.g. Aggressive Q3)"
+              aria-label="Scenario name"
               value={scenarioName}
               onChange={(e) => setScenarioName(e.target.value)}
             />
@@ -401,7 +408,7 @@ export function WhatIfSimulator() {
             <CardContent>
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
+                  <LineChart data={chartData} aria-label="Baseline vs Simulated Net line chart">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="dateLabel" minTickGap={24} />
                     <YAxis />
@@ -422,7 +429,7 @@ export function WhatIfSimulator() {
             <CardContent>
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData}>
+                  <BarChart data={chartData} aria-label="Daily Net Delta bar chart">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="dateLabel" minTickGap={24} />
                     <YAxis />

@@ -22,7 +22,7 @@ export default function ChatWidget() {
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
   // Détection dynamique de l'URL API
-  const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+  const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3001';
   const SOCKET_URL = API_URL.replace('/api', '');
 
   useEffect(() => {
