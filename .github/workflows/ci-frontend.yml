@@ -34,8 +34,9 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Run unit tests
-      run: npm run test
+    - name: Run unit tests with coverage
+      run: NODE_OPTIONS="--max-old-space-size=4096" npm run test:coverage
+      continue-on-error: false
 
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
@@ -46,4 +47,5 @@ jobs:
         projectBaseDir: Front-End
         args: >
           -Dsonar.projectKey=erp-frontend
-          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.tsx
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.tsx,**/*.test.tsx

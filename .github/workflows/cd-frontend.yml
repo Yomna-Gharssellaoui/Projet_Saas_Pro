@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  deploy:
+  deploy-docker:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
@@ -28,11 +28,29 @@ jobs:
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/erp-frontend:latest
 
     - name: Set up Kubeconfig
+      if: ${{ secrets.KUBECONFIG != '' }}
       run: |
         mkdir -p $HOME/.kube
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
 
     - name: Deploy to Kubernetes
+      if: ${{ secrets.KUBECONFIG != '' }}
       run: |
         kubectl set image deployment/frontend-deployment frontend=${{ secrets.DOCKERHUB_USERNAME }}/erp-frontend:latest
         kubectl rollout status deployment/frontend-deployment
+
+  deploy-vercel:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./Front-End
+        vercel-args: '--prod'
