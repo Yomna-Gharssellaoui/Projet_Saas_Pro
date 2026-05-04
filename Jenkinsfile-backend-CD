@@ -3,12 +3,9 @@ pipeline {
     tools { nodejs 'node20' }
 
     environment {
-        DOCKERHUB_CREDENTIALS  = credentials('DOCKERHUB_CREDENTIALS')
-        VERCEL_TOKEN           = credentials('VERCEL_TOKEN')
-        VERCEL_ORG_ID          = credentials('VERCEL_ORG_ID')
-        VERCEL_PROJECT_ID      = credentials('VERCEL_BACKEND_PROJECT_ID')
-        IMAGE_NAME             = "${DOCKERHUB_CREDENTIALS_USR}/saas-backend"
-        IMAGE_TAG              = "${BUILD_NUMBER}"
+        DOCKERHUB_CREDENTIALS = credentials('DOCKERHUB_CREDENTIALS')
+        IMAGE_NAME = "${DOCKERHUB_CREDENTIALS_USR}/saas-backend"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -49,29 +46,19 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy to Vercel') {
-            steps {
-                dir('Back-End') {
-                    sh '''
-                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                        npx vercel build --prod --token=$VERCEL_TOKEN
-                        npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
-                    '''
-                }
-            }
-        }
     }
 
     post {
         success {
-            echo 'Backend deployed to Kubernetes and Vercel successfully.'
+            echo 'Backend deployed to Kubernetes successfully.'
         }
         failure {
             echo 'Backend CD failed. Check logs above.'
         }
         always {
-            sh 'docker logout'
+            node('') {
+                sh 'docker logout || true'
+            }
         }
     }
 }
