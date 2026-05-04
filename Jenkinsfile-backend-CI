@@ -24,7 +24,7 @@ pipeline {
         stage('Unit Tests') {
     steps {
         dir('Back-End') {
-            sh 'npm test -- --forceExit --passWithNoTests --coverage || true'
+            sh 'npm test -- --forceExit --passWithNoTests  || true'
         }
     }
 }
