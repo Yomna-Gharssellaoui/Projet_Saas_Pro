@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: saas-frontend
-          image: yomnagharssellaoui03/saas-frontend:IMAGE_TAG
+          image: yomnagharssellaoui/saas-frontend:IMAGE_TAG
           ports:
             - containerPort: 80
           resources:
@@ -28,14 +28,12 @@ spec:
               memory: "256Mi"
               cpu: "200m"
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 80
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 80
             initialDelaySeconds: 15
             periodSeconds: 10
