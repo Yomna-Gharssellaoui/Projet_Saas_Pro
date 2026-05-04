@@ -21,38 +21,33 @@ spec:
           ports:
             - containerPort: 3000
           env:
-  - name: NODE_ENV
-    value: "production"
-  - name: DB_HOST
-    valueFrom:
-      secretKeyRef:
-        name: backend-secrets
-        key: DB_HOST
-  - name: DB_PORT
-    valueFrom:
-      secretKeyRef:
-        name: backend-secrets
-        key: DB_PORT
-  - name: DB_USER
-    valueFrom:
-      secretKeyRef:
-        name: backend-secrets
-        key: DB_USER
-  - name: DB_PASS
-    valueFrom:
-      secretKeyRef:
-        name: backend-secrets
-        key: DB_PASS
-  - name: DB_NAME
-    valueFrom:
-      secretKeyRef:
-        name: backend-secrets
-        key: DB_NAME
-  - name: JWT_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: backend-secrets
-        key: JWT_SECRET
+            - name: NODE_ENV
+              value: "production"
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: DB_PASS
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: DB_NAME
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
