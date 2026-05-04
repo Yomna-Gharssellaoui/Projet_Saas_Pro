@@ -2,17 +2,12 @@ pipeline {
     agent any
     tools { nodejs 'node20' }
 
-    environment {
-        SONAR_TOKEN = credentials('SONAR_BACKEND_TOKEN')
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
         stage('Install') {
             steps {
                 dir('Back-End') {
@@ -20,16 +15,13 @@ pipeline {
                 }
             }
         }
-
         stage('Unit Tests') {
-    steps {
-        dir('Back-End') {
-            sh 'npm test -- --forceExit --passWithNoTests  || true'
+            steps {
+                dir('Back-End') {
+                    sh 'npm test -- --forceExit --passWithNoTests || true'
+                }
+            }
         }
-    }
-}
-
-
         stage('Build') {
             steps {
                 dir('Back-End') {
@@ -37,14 +29,12 @@ pipeline {
                 }
             }
         }
-
         stage('Trigger CD') {
             steps {
                 build job: 'backend-CD', wait: false
             }
         }
     }
-
     post {
         success {
             echo 'Backend CI passed — CD pipeline triggered.'
