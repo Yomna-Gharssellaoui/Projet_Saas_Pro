@@ -1,0 +1,235 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+      external_labels:
+        cluster: 'saas-cluster'
+        env: 'production'
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+                - alertmanager.monitoring.svc.cluster.local:9093
+
+    rule_files:
+      - /etc/prometheus/rules/*.yml
+
+    scrape_configs:
+      # ── Prometheus itself ──────────────────────────────────────────────────
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+      # ── Kubernetes API server ──────────────────────────────────────────────
+      - job_name: 'kubernetes-apiservers'
+        kubernetes_sd_configs:
+          - role: endpoints
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: default;kubernetes;https
+
+      # ── Node exporter (all nodes) ──────────────────────────────────────────
+      - job_name: 'kubernetes-nodes'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/$1/proxy/metrics
+
+      # ── cAdvisor (pod-level CPU/mem) ───────────────────────────────────────
+      - job_name: 'kubernetes-cadvisor'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        metrics_path: /metrics/cadvisor
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+      # ── All annotated pods (opt-in via annotations) ────────────────────────
+      # Add these to your pod spec to be scraped:
+      #   prometheus.io/scrape: "true"
+      #   prometheus.io/port: "3000"
+      #   prometheus.io/path: "/metrics"   (optional, defaults to /metrics)
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: 'true'
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: kubernetes_pod_name
+
+      # ── saas-backend (direct, no annotation needed) ────────────────────────
+      - job_name: 'saas-backend'
+        static_configs:
+          - targets: ['saas-backend-service.backend.svc.cluster.local:3000']
+        metrics_path: /metrics
+        scrape_interval: 10s
+
+      # ── saas-frontend nginx stub_status ───────────────────────────────────
+      - job_name: 'saas-frontend'
+        static_configs:
+          - targets: ['saas-frontend-service.frontend.svc.cluster.local:80']
+        metrics_path: /stub_status
+        scrape_interval: 15s
+
+  # ── Alert rules ─────────────────────────────────────────────────────────────
+  alert-rules.yml: |
+    groups:
+      # ── Pod health ───────────────────────────────────────────────────────
+      - name: pod_health
+        rules:
+          - alert: PodCrashLooping
+            expr: rate(kube_pod_container_status_restarts_total[5m]) > 0
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Pod {{ $labels.pod }} is crash-looping"
+              description: "Container {{ $labels.container }} in namespace {{ $labels.namespace }} has restarted {{ $value | printf \"%.2f\" }} times/sec."
+
+          - alert: PodNotReady
+            expr: kube_pod_status_ready{condition="true"} == 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod {{ $labels.pod }} is not ready"
+              description: "Pod {{ $labels.pod }} in {{ $labels.namespace }} has been not-ready for 5 minutes."
+
+          - alert: DeploymentReplicasMismatch
+            expr: kube_deployment_spec_replicas != kube_deployment_status_available_replicas
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Deployment {{ $labels.deployment }} has unavailable replicas"
+              description: "Expected {{ $value }} replicas but not all are available in {{ $labels.namespace }}."
+
+      # ── Resource pressure ────────────────────────────────────────────────
+      - name: resource_pressure
+        rules:
+          - alert: HighCPUUsage
+            expr: |
+              sum(rate(container_cpu_usage_seconds_total{container!="",namespace=~"backend|frontend"}[5m]))
+              by (namespace, pod, container)
+              / sum(kube_pod_container_resource_limits{resource="cpu",namespace=~"backend|frontend"})
+              by (namespace, pod, container) > 0.85
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU on {{ $labels.pod }}"
+              description: "{{ $labels.container }} in {{ $labels.namespace }} is using >85% of its CPU limit."
+
+          - alert: HighMemoryUsage
+            expr: |
+              sum(container_memory_working_set_bytes{container!="",namespace=~"backend|frontend"})
+              by (namespace, pod, container)
+              / sum(kube_pod_container_resource_limits{resource="memory",namespace=~"backend|frontend"})
+              by (namespace, pod, container) > 0.90
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "High memory on {{ $labels.pod }}"
+              description: "{{ $labels.container }} in {{ $labels.namespace }} is using >90% of its memory limit — OOMKill risk."
+
+      # ── Application-level (NestJS backend) ──────────────────────────────
+      - name: app_backend
+        rules:
+          - alert: BackendHighErrorRate
+            expr: |
+              sum(rate(http_requests_total{job="saas-backend",status=~"5.."}[5m]))
+              / sum(rate(http_requests_total{job="saas-backend"}[5m])) > 0.05
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Backend error rate above 5%"
+              description: "{{ $value | humanizePercentage }} of backend requests are returning 5xx errors."
+
+          - alert: BackendHighLatency
+            expr: |
+              histogram_quantile(0.95,
+                sum(rate(http_request_duration_seconds_bucket{job="saas-backend"}[5m]))
+                by (le)
+              ) > 2
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Backend p95 latency above 2s"
+              description: "The 95th-percentile response time is {{ $value | humanizeDuration }}."
+
+          - alert: BackendDown
+            expr: up{job="saas-backend"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Backend service is unreachable"
+              description: "Prometheus cannot scrape the backend. Service may be down."
+
+      # ── Node ─────────────────────────────────────────────────────────────
+      - name: node_health
+        rules:
+          - alert: NodeDiskPressure
+            expr: kube_node_status_condition{condition="DiskPressure",status="true"} == 1
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Node {{ $labels.node }} has disk pressure"
+              description: "Kubernetes node is reporting DiskPressure — pods may be evicted."
+
+          - alert: NodeMemoryPressure
+            expr: kube_node_status_condition{condition="MemoryPressure",status="true"} == 1
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Node {{ $labels.node }} has memory pressure"
+              description: "Kubernetes node is reporting MemoryPressure."

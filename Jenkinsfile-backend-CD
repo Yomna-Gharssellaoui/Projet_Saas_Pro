@@ -1,0 +1,77 @@
+pipeline {
+    agent any
+    tools { nodejs 'node20' }
+
+    environment {
+        DOCKERHUB_CREDENTIALS  = credentials('DOCKERHUB_CREDENTIALS')
+        VERCEL_TOKEN           = credentials('VERCEL_TOKEN')
+        VERCEL_ORG_ID          = credentials('VERCEL_ORG_ID')
+        VERCEL_PROJECT_ID      = credentials('VERCEL_BACKEND_PROJECT_ID')
+        IMAGE_NAME             = "${DOCKERHUB_CREDENTIALS_USR}/saas-backend"
+        IMAGE_TAG              = "${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('Back-End') {
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest ."
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh '''
+                    echo $DOCKERHUB_CREDENTIALS_PSW | \
+                    docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker push ${IMAGE_NAME}:latest
+                '''
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withKubeConfig([credentialsId: 'KUBECONFIG_FILE']) {
+                    sh '''
+                        sed -i "s|IMAGE_TAG|${IMAGE_TAG}|g" k8s/backend-deployment.yaml
+                        kubectl apply -f k8s/backend-deployment.yaml
+                        kubectl apply -f k8s/backend-service.yaml
+                        kubectl rollout status deployment/saas-backend -n backend
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Vercel') {
+            steps {
+                dir('Back-End') {
+                    sh '''
+                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+                        npx vercel build --prod --token=$VERCEL_TOKEN
+                        npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Backend deployed to Kubernetes and Vercel successfully.'
+        }
+        failure {
+            echo 'Backend CD failed. Check logs above.'
+        }
+        always {
+            sh 'docker logout'
+        }
+    }
+}

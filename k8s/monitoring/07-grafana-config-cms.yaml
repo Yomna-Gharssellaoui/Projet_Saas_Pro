@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+data:
+  datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus.monitoring.svc.cluster.local:9090
+        isDefault: true
+        editable: false
+        jsonData:
+          timeInterval: "15s"
+          queryTimeout: "60s"
+          httpMethod: POST
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-providers
+  namespace: monitoring
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: 'SaaS App'
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 30
+        options:
+          path: /var/lib/grafana/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  saas-overview.json: |
+    {
+      "title": "SaaS Overview",
+      "uid": "saas-overview",
+      "schemaVersion": 36,
+      "version": 1,
+      "refresh": "30s",
+      "time": { "from": "now-1h", "to": "now" },
+      "panels": [
+        {
+          "id": 1, "type": "stat", "title": "Backend Up",
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+          "targets": [{
+            "expr": "up{job=\"saas-backend\"}",
+            "legendFormat": "backend"
+          }],
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "fieldConfig": { "defaults": { "mappings": [{ "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }] } }
+        },
+        {
+          "id": 2, "type": "timeseries", "title": "HTTP Request Rate (backend)",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+          "targets": [{
+            "expr": "sum(rate(http_requests_total{job=\"saas-backend\"}[2m])) by (status)",
+            "legendFormat": "{{status}}"
+          }]
+        },
+        {
+          "id": 3, "type": "timeseries", "title": "Backend p50 / p95 / p99 Latency",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+          "targets": [
+            { "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"saas-backend\"}[5m])) by (le))", "legendFormat": "p50" },
+            { "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"saas-backend\"}[5m])) by (le))", "legendFormat": "p95" },
+            { "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=\"saas-backend\"}[5m])) by (le))", "legendFormat": "p99" }
+          ]
+        },
+        {
+          "id": 4, "type": "timeseries", "title": "Pod CPU Usage",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "targets": [{
+            "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=~\"backend|frontend\",container!=\"\"}[5m])) by (namespace, pod)",
+            "legendFormat": "{{namespace}}/{{pod}}"
+          }]
+        },
+        {
+          "id": 5, "type": "timeseries", "title": "Pod Memory Usage",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "targets": [{
+            "expr": "sum(container_memory_working_set_bytes{namespace=~\"backend|frontend\",container!=\"\"}) by (namespace, pod)",
+            "legendFormat": "{{namespace}}/{{pod}}"
+          }]
+        },
+        {
+          "id": 6, "type": "timeseries", "title": "5xx Error Rate",
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+          "targets": [{
+            "expr": "sum(rate(http_requests_total{job=\"saas-backend\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=\"saas-backend\"}[5m]))",
+            "legendFormat": "error rate"
+          }],
+          "fieldConfig": { "defaults": { "unit": "percentunit", "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 0.05 }] } } }
+        }
+      ]
+    }

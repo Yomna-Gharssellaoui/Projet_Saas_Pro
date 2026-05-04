@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+    tools { nodejs 'node20' }
+
+    environment {
+        SONAR_TOKEN = credentials('SONAR_BACKEND_TOKEN')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install') {
+            steps {
+                dir('Back-End') {
+                    sh 'npm ci'
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                dir('Back-End') {
+                    sh 'npm test -- --forceExit --passWithNoTests --coverage'
+                }
+            }
+            post {
+                failure {
+                    error('Backend unit tests failed. Pipeline stopped.')
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir('Back-End') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            npx sonar-scanner \
+                              -Dsonar.projectKey=saas-backend \
+                              -Dsonar.sources=src \
+                              -Dsonar.tests=src \
+                              -Dsonar.test.inclusions=**/*.spec.ts \
+                              -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
+                              -Dsonar.host.url=http://localhost:9000 \
+                              -Dsonar.token=$SONAR_TOKEN
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('Back-End') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Trigger CD') {
+            steps {
+                build job: 'backend-CD', wait: false
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Backend CI passed — CD pipeline triggered.'
+        }
+        failure {
+            echo 'Backend CI failed. Check logs above.'
+        }
+    }
+}
