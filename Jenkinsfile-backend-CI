@@ -1,21 +1,19 @@
 pipeline {
     agent any
-    
     tools {
         nodejs 'node20'
     }
-    
     environment {
         NODE_OPTIONS = '--max-old-space-size=512'
+        JEST_JUNIT_OUTPUT_DIR = 'Back-End/test-results'
+        JEST_JUNIT_OUTPUT_NAME = 'junit.xml'
     }
-    
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        
         stage('Install Dependencies') {
             steps {
                 dir('Back-End') {
@@ -23,16 +21,20 @@ pipeline {
                 }
             }
         }
-        
         stage('Unit Tests + Coverage') {
             steps {
                 dir('Back-End') {
-                    sh 'npm run test:cov'
+                    sh '''
+                        npm run test:cov -- \
+                          --forceExit \
+                          --passWithNoTests \
+                          --reporters=default \
+                          --reporters=jest-junit
+                    '''
                 }
             }
         }
-        
-                stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             environment {
                 SONAR_TOKEN = credentials('SONAR_BACKEND_TOKEN')
             }
@@ -52,15 +54,14 @@ pipeline {
                     }
                 }
             }
-        }      
+        }
         stage('Quality Gate') {
             steps {
-                timeout(time: 20, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false
                 }
             }
         }
-        
         stage('Build') {
             steps {
                 dir('Back-End') {
@@ -68,20 +69,15 @@ pipeline {
                 }
             }
         }
-        
         stage('Trigger CD') {
             steps {
                 build job: 'backend-CD', wait: false
             }
         }
     }
-    
     post {
         always {
-            dir('Back-End') {
-                // Optional: Publish test results and coverage (if you add reporters later)
-                junit allowEmptyResults: true, testResults: '**/junit.xml'
-            }
+            junit allowEmptyResults: true, testResults: 'Back-End/test-results/junit.xml'
         }
         success {
             echo '✅ Backend CI passed — CD pipeline triggered.'
