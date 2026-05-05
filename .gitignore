@@ -11,3 +11,5 @@ Back-End/dist/
 Back-End/.vite/
 Back-End/__pycache__/
 Back-End/**/*.tsbuildinfo
+Back-End/coverage/
+Back-End/.scannerwork/

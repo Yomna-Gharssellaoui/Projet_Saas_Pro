@@ -34,14 +34,14 @@ pipeline {
         
                 stage('SonarQube Analysis') {
             environment {
-                SONAR_TOKEN = credentials('sonar-token')
+                SONAR_TOKEN = credentials('SONAR_BACKEND_TOKEN')
             }
             steps {
                 dir('Back-End') {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
                             sonar-scanner \
-                                -Dsonar.projectKey=saaspro-backend \
+                                -Dsonar.projectKey=saas-backend \
                                 -Dsonar.projectName="SaasPro Backend" \
                                 -Dsonar.sources=src \
                                 -Dsonar.test.inclusions=**/*.spec.ts \
