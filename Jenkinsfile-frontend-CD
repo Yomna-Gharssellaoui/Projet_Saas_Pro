@@ -3,12 +3,12 @@ pipeline {
     tools { nodejs 'node20' }
 
     environment {
-        DOCKERHUB_CREDENTIALS      = credentials('DOCKERHUB_CREDENTIALS')
-        VERCEL_TOKEN               = credentials('VERCEL_TOKEN')
-        VERCEL_ORG_ID              = credentials('VERCEL_ORG_ID')
-        VERCEL_PROJECT_ID          = credentials('VERCEL_FRONTEND_PROJECT_ID')
-        IMAGE_NAME                 = "${DOCKERHUB_CREDENTIALS_USR}/saas-frontend"
-        IMAGE_TAG                  = "${BUILD_NUMBER}"
+        DOCKERHUB_CREDENTIALS  = credentials('DOCKERHUB_CREDENTIALS')
+        VERCEL_TOKEN           = credentials('VERCEL_TOKEN')
+        VERCEL_ORG_ID          = credentials('VERCEL_ORG_ID')
+        VERCEL_PROJECT_ID      = credentials('VERCEL_FRONTEND_PROJECT_ID')
+        IMAGE_NAME             = "${DOCKERHUB_CREDENTIALS_USR}/saas-frontend"
+        IMAGE_TAG              = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -51,15 +51,16 @@ pipeline {
         }
 
         stage('Deploy to Vercel') {
-    steps {
-        dir('Front-End') {
-            sh '''#!/bin/bash
-                npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
-            '''
+            steps {
+                dir('Front-End') {
+                    sh '''#!/bin/bash
+                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+                        npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+                    '''
+                }
+            }
         }
     }
-}
 
     post {
         success {
@@ -69,9 +70,7 @@ pipeline {
             echo 'Frontend CD failed. Check logs above.'
         }
         always {
-            node('') {
-                sh 'docker logout || true'
-            }
+            sh 'docker logout || true'
         }
     }
 }
