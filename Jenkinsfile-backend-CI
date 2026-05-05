@@ -33,19 +33,18 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            environment {
-                SONAR_TOKEN = credentials('sonar-token')
-            }
-            steps {
-                dir('Back-End') {
-                    withSonarQubeEnv('SonarQube') {
-                        sh '''
-                            sonar-scanner \
-                                -Dsonar.projectKey=saaspro-backend \
-                                -Dsonar.projectName="SaasPro Backend"
-                        '''
-                    }
-                }
+    steps {
+        dir('Back-End') {
+            withSonarQubeEnv('SonarQube') {
+                sh '''
+cat > sonar-project.properties <<EOF
+sonar.projectKey=saaspro-backend
+sonar.projectName=SaasPro Backend
+sonar.sources=src
+EOF
+
+sonar-scanner
+                '''
             }
         }
     }
