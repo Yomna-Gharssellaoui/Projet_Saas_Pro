@@ -1,14 +1,15 @@
 pipeline {
     agent any
     tools { nodejs 'node20' }
-
+    environment {
+        SONAR_TOKEN = credentials('SONAR_FRONTEND_TOKEN')
+    }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
         stage('Install') {
             steps {
                 dir('Front-End') {
@@ -16,13 +17,39 @@ pipeline {
                 }
             }
         }
-
         stage('Unit Tests') {
             steps {
-                echo 'Tests skipped temporarily due to memory constraints'
+                dir('Front-End') {
+                    sh 'npm run test:coverage || true'
+                }
             }
         }
-
+        stage('SonarQube Analysis') {
+            steps {
+                dir('Front-End') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            npx sonar-scanner \
+                              -Dsonar.projectKey=saas-frontend \
+                              -Dsonar.projectName="SaasPro Frontend" \
+                              -Dsonar.sources=src \
+                              -Dsonar.tests=src \
+                              -Dsonar.test.inclusions=**/*.test.tsx,**/*.test.ts \
+                              -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.tsx,**/*.test.ts \
+                              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                              -Dsonar.login=${SONAR_TOKEN}
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false
+                }
+            }
+        }
         stage('Build') {
             steps {
                 dir('Front-End') {
@@ -30,14 +57,12 @@ pipeline {
                 }
             }
         }
-
         stage('Trigger CD') {
             steps {
                 build job: 'frontend-CD', wait: false
             }
         }
     }
-
     post {
         success {
             echo 'Frontend CI passed — CD pipeline triggered.'
