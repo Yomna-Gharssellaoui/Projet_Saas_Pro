@@ -53,9 +53,10 @@ pipeline {
         stage('Deploy to Vercel') {
             steps {
                 dir('Front-End') {
-                    sh '''#!/bin/bash
+                    sh '''
+                        npm install -g vercel
                         npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                        npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+                        npx vercel deploy --prod --token=$VERCEL_TOKEN
                     '''
                 }
             }
