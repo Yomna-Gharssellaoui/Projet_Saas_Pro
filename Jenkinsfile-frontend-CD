@@ -3,9 +3,12 @@ pipeline {
     tools { nodejs 'node20' }
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('DOCKERHUB_CREDENTIALS')
-        IMAGE_NAME = "${DOCKERHUB_CREDENTIALS_USR}/saas-frontend"
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        DOCKERHUB_CREDENTIALS      = credentials('DOCKERHUB_CREDENTIALS')
+        VERCEL_TOKEN               = credentials('VERCEL_TOKEN')
+        VERCEL_ORG_ID              = credentials('VERCEL_ORG_ID')
+        VERCEL_PROJECT_ID          = credentials('VERCEL_FRONTEND_PROJECT_ID')
+        IMAGE_NAME                 = "${DOCKERHUB_CREDENTIALS_USR}/saas-frontend"
+        IMAGE_TAG                  = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -46,11 +49,23 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Vercel') {
+            steps {
+                dir('Front-End') {
+                    sh '''
+                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+                        npx vercel build --prod --token=$VERCEL_TOKEN
+                        npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Frontend deployed to Kubernetes successfully.'
+            echo 'Frontend deployed to Kubernetes and Vercel successfully.'
         }
         failure {
             echo 'Frontend CD failed. Check logs above.'
