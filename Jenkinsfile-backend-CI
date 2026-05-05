@@ -5,8 +5,6 @@ pipeline {
     }
     environment {
         NODE_OPTIONS = '--max-old-space-size=512'
-        JEST_JUNIT_OUTPUT_DIR = 'Back-End/test-results'
-        JEST_JUNIT_OUTPUT_NAME = 'junit.xml'
     }
     stages {
         stage('Checkout') {
@@ -25,9 +23,13 @@ pipeline {
             steps {
                 dir('Back-End') {
                     sh '''
-                        npm run test:cov -- \
+                        mkdir -p test-results
+                        JEST_JUNIT_OUTPUT_DIR=test-results \
+                        JEST_JUNIT_OUTPUT_NAME=junit.xml \
+                        npx jest \
                           --forceExit \
                           --passWithNoTests \
+                          --coverage \
                           --reporters=default \
                           --reporters=jest-junit
                     '''
@@ -57,7 +59,7 @@ pipeline {
         }
         stage('Quality Gate') {
             steps {
-                timeout(time: 5, unit: 'MINUTES') {
+                timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
                 }
             }
