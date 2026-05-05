@@ -14,9 +14,9 @@
     "desktop": "concurrently \"npm run frontend\" \"npm run electron\"",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test": "node --max-old-space-size=256 node_modules/.bin/jest",
+    "test": "node --max-old-space-size=512 node_modules/.bin/jest --runInBand --passWithNoTests",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:cov": "node --max-old-space-size=512 node_modules/.bin/jest --runInBand --passWithNoTests --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {

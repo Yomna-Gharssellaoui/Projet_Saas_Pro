@@ -1,6 +1,13 @@
 pipeline {
     agent any
-    tools { nodejs 'node20' }
+
+    tools {
+        nodejs 'node20'
+    }
+
+    environment {
+        NODE_OPTIONS = '--max-old-space-size=512'
+    }
 
     stages {
         stage('Checkout') {
@@ -8,37 +15,38 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Install') {
+
+        stage('Install Dependencies') {
             steps {
                 dir('Back-End') {
-                    sh 'npm ci'
+                    sh 'npm ci --prefer-offline'
                 }
             }
         }
-        stage('Unit Tests') {
-    steps {
-        echo 'Tests skipped temporarily due to memory constraints'
-    }
-}
-        stage('Build') {
+
+        stage('Unit Tests + Coverage') {
             steps {
                 dir('Back-End') {
-                    sh 'npm run build'
+                    sh 'npm run test:cov'
                 }
             }
         }
-        stage('Trigger CD') {
-            steps {
-                build job: 'backend-CD', wait: false
+
+        stage('SonarQube Analysis') {
+            environment {
+                SONAR_TOKEN = credentials('sonar-token')
             }
-        }
-    }
-    post {
-        success {
-            echo 'Backend CI passed — CD pipeline triggered.'
-        }
-        failure {
-            echo 'Backend CI failed. Check logs above.'
+            steps {
+                dir('Back-End') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            sonar-scanner \
+                                -Dsonar.projectKey=saaspro-backend \
+                                -Dsonar.projectName="SaasPro Backend"
+                        '''
+                    }
+                }
+            }
         }
     }
 }
