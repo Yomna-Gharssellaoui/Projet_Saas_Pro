@@ -26,7 +26,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", { exclude: ["metrics"] });
 
   app.useGlobalPipes(
     new ValidationPipe({
