@@ -9,8 +9,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  # Remove storageClassName if your cluster has a default StorageClass
-  # storageClassName: standard
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -31,18 +29,9 @@ spec:
     spec:
       serviceAccountName: prometheus
       securityContext:
-        fsGroup: 65534          # prometheus user in the official image
+        fsGroup: 65534
         runAsUser: 65534
         runAsNonRoot: true
-      initContainers:
-        - name: fix-permissions
-          image: busybox
-          command: ["sh", "-c", "chown -R 65534:65534 /prometheus"]
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: storage
-              mountPath: /prometheus
       containers:
         - name: prometheus
           image: prom/prometheus:v2.51.2
@@ -50,7 +39,7 @@ spec:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
             - "--storage.tsdb.retention.time=15d"
-            - "--web.enable-lifecycle"            # allow hot-reload via POST /-/reload
+            - "--web.enable-lifecycle"
             - "--web.enable-admin-api"
           ports:
             - containerPort: 9090
