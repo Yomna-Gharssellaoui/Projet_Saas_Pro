@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools { nodejs 'node20' }
     environment {
-        SONAR_TOKEN = credentials('SONAR_FRONTEND_TOKEN')
+        NODE_OPTIONS = '--max-old-space-size=512'
     }
     stages {
         stage('Checkout') {
@@ -25,6 +25,9 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
+            environment {
+                SONAR_TOKEN = credentials('SONAR_FRONTEND_TOKEN')
+            }
             steps {
                 dir('Front-End') {
                     withSonarQubeEnv('SonarQube') {
@@ -37,16 +40,9 @@ pipeline {
                               -Dsonar.test.inclusions=**/*.test.tsx,**/*.test.ts \
                               -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.tsx,**/*.test.ts \
                               -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                              -Dsonar.login=${SONAR_TOKEN}
+                              -Dsonar.token=${SONAR_TOKEN}
                         '''
                     }
-                }
-            }
-        }
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: false
                 }
             }
         }
@@ -65,10 +61,10 @@ pipeline {
     }
     post {
         success {
-            echo 'Frontend CI passed — CD pipeline triggered.'
+            echo '✅ Frontend CI passed — CD pipeline triggered.'
         }
         failure {
-            echo 'Frontend CI failed. Check logs above.'
+            echo '❌ Frontend CI failed. Check logs above.'
         }
     }
 }
