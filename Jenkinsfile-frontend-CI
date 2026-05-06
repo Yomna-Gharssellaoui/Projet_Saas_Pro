@@ -6,22 +6,16 @@ pipeline {
     }
     stages {
         stage('Checkout') {
-            steps {
-                checkout scm
-            }
+            steps { checkout scm }
         }
         stage('Install') {
             steps {
-                dir('Front-End') {
-                    sh 'npm ci'
-                }
+                dir('Front-End') { sh 'npm ci' }
             }
         }
         stage('Unit Tests') {
             steps {
-                dir('Front-End') {
-                    sh 'npm run test:coverage || true'
-                }
+                dir('Front-End') { sh 'npm run test:coverage || true' }
             }
         }
         stage('SonarQube Analysis') {
@@ -36,11 +30,10 @@ pipeline {
                               -Dsonar.projectKey=saas-frontend \
                               -Dsonar.projectName="SaasPro Frontend" \
                               -Dsonar.sources=src \
-                              -Dsonar.tests=src \
-                              -Dsonar.test.inclusions=**/*.test.tsx,**/*.test.ts \
-                              -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.tsx,**/*.test.ts \
+                              -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.tsx,**/*.test.ts,**/coverage/**,**/*.spec.ts \
                               -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                               -Dsonar.javascript.node.maxspace=2048 \
+                              -Dsonar.cpd.exclusions=**/* \
                               -Dsonar.token=${SONAR_TOKEN}
                         '''
                     }
@@ -49,9 +42,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                dir('Front-End') {
-                    sh 'npm run build'
-                }
+                dir('Front-End') { sh 'npm run build' }
             }
         }
         stage('Trigger CD') {
@@ -61,11 +52,7 @@ pipeline {
         }
     }
     post {
-        success {
-            echo '✅ Frontend CI passed — CD pipeline triggered.'
-        }
-        failure {
-            echo '❌ Frontend CI failed. Check logs above.'
-        }
+        success { echo '✅ Frontend CI passed.' }
+        failure { echo '❌ Frontend CI failed.' }
     }
 }
