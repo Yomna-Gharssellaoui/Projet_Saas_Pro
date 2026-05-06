@@ -5,7 +5,7 @@
   "main": "electron.js",
   "type": "module",
   "scripts": {
-    "build": "vite build",
+    "build": "node --max-old-space-size=1024 node_modules/.bin/vite build",
     "electron": "electron .",
     "desktop": "concurrently \"npm run frontend\" \"npm run electron\"",
     "frontend": "vite",
