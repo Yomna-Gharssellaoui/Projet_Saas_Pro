@@ -52,6 +52,7 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
     typeof FormData !== "undefined" && options.body instanceof FormData;
 
   const headers: Record<string, string> = {
+    "ngrok-skip-browser-warning": "true",
     ...extraHeaders,
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(businessId ? { "x-business-id": businessId } : {}),
