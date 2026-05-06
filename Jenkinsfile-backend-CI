@@ -30,6 +30,7 @@ pipeline {
                           --forceExit \
                           --passWithNoTests \
                           --coverage \
+                          --maxWorkers=2 \
                           --reporters=default \
                           --reporters=jest-junit
                     '''
