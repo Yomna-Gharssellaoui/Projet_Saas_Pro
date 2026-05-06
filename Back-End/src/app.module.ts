@@ -3,8 +3,8 @@ import { TenantMiddleware } from "./common/middleware/tenant.middleware";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { typeOrmConfig } from "./config/typeorm.config";
+import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 import { CommunicationModule } from './modules/communication/communication.module';
-
 import { BusinessesModule } from "./modules/businesses/businesses.module";
 import { UsersModule } from "./modules/users/users.module";
 import { ClientsModule } from "./modules/clients/clients.module";
@@ -17,16 +17,20 @@ import { MailModule } from "./modules/mail/mail.module";
 import { RegistrationRequestsModule } from "./modules/registration-requests/registration-requests.module";
 import { TenantModule } from "./common/tenant/tenant.module";
 import { SecurityQuestionsModule } from "./modules/security-questions/security-questions.module";
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useFactory: typeOrmConfig }),
+    PrometheusModule.register({
+      defaultMetrics: { enabled: true },
+      path: '/metrics',
+    }),
     BusinessesModule,
     UsersModule,
     ClientsModule,
     InvoicesModule,
     CommunicationModule,
-
     TenantModule,
     MailModule,
     ExpensesModule,
@@ -34,7 +38,7 @@ import { SecurityQuestionsModule } from "./modules/security-questions/security-q
     AIInsightsModule,
     RegistrationRequestsModule,
     AuthModule,
-    SecurityQuestionsModule
+    SecurityQuestionsModule,
   ],
 })
 export class AppModule implements NestModule {
@@ -42,4 +46,3 @@ export class AppModule implements NestModule {
     consumer.apply(TenantMiddleware).forRoutes('*');
   }
 }
-
