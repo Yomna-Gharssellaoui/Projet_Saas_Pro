@@ -37,12 +37,14 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withKubeConfig([credentialsId: 'KUBECONFIG_FILE']) {
-                    sh '''
+                    sh """
+                        echo "Deploying with IMAGE_TAG: ${IMAGE_TAG}"
                         sed -i "s|IMAGE_TAG|${IMAGE_TAG}|g" k8s/backend-deployment.yaml
+                        cat k8s/backend-deployment.yaml | grep image:
                         kubectl apply -f k8s/backend-deployment.yaml
                         kubectl apply -f k8s/backend-service.yaml
                         kubectl rollout status deployment/saas-backend -n backend
-                    '''
+                    """
                 }
             }
         }
@@ -56,9 +58,7 @@ pipeline {
             echo 'Backend CD failed. Check logs above.'
         }
         always {
-            node('') {
-                sh 'docker logout || true'
-            }
+            sh 'docker logout || true'
         }
     }
 }
