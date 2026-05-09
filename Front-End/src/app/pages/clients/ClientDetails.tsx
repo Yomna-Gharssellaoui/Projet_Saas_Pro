@@ -52,6 +52,7 @@ import { toast } from "sonner";
 
 import { useBusinessContext } from "@/shared/contexts/BusinessContext";
 import { api } from "@/shared/lib/apiClient";
+import { AiRiskCard } from "@/app/components/organisms/AiRiskCard";
 
 type Client = {
   id: string;
@@ -77,7 +78,7 @@ type Invoice = {
   issueDate: string;
   dueDate: string;
   status: string;
-  subtotal: number;
+  subtotal: number; 
   taxAmount: number | null;
   totalAmount: number | null;
   paidAmount: number;
@@ -742,6 +743,11 @@ export function ClientDetails() {
 
       {/* Main Info Grid */}
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        {/* AI Risk Assessment */}
+        {client?.id && (
+          <AiRiskCard clientId={client.id} className="rounded-[24px] border-2" />
+        )}
+
         <Card className="rounded-[24px] border-border shadow-sm">
           <CardHeader>
             <CardTitle>Contact Information</CardTitle>
@@ -1015,7 +1021,9 @@ export function ClientDetails() {
         </TabsContent>
 
         <TabsContent value="overview" className="mt-0">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+            <AiRiskCard clientId={client.id} className="rounded-[24px] shadow-sm" />
+
             <Card className="rounded-[24px] border-border shadow-sm">
               <CardHeader>
                 <CardTitle>Billing Overview</CardTitle>

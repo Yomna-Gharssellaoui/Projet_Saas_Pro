@@ -1,6 +1,36 @@
 const AI_BASE =
   import.meta.env.VITE_AI_API_URL || "http://127.0.0.1:8010/api/v1";
 
+import { api } from "@/shared/lib/apiClient"; // Ajustez ce chemin selon votre projet
+
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
+
+export interface AiRiskResponse {
+  clientId: string;
+  risk: RiskLevel;
+  score: number;
+  details: {
+    totalInvoices: number;
+    unpaidInvoices: number;
+    lateInvoices: number;
+    outstanding: number;
+    revenue: number;
+  };
+  reason: string;
+}
+
+export const AiApi = {
+  /**
+   * Predict risk level for a client based on their invoice history
+   * @param clientId The client ID to predict risk for
+   * @returns Risk prediction with score and details
+   */
+  getRisk: (clientId: string) => 
+    api<AiRiskResponse>(`/ai/risk/${clientId}`),
+};
+
+
+
 async function aiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${AI_BASE}${path}`, {
     ...options,

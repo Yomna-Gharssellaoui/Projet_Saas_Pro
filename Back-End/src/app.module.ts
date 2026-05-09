@@ -18,6 +18,9 @@ import { RegistrationRequestsModule } from "./modules/registration-requests/regi
 import { TenantModule } from "./common/tenant/tenant.module";
 import { SecurityQuestionsModule } from "./modules/security-questions/security-questions.module";
 
+// 👇 Voici l'import de votre IA (vérifiez si c'est bien dans le dossier IA ou modules/IA)
+import { AiModule } from './modules/IA/ai.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -39,6 +42,9 @@ import { SecurityQuestionsModule } from "./modules/security-questions/security-q
     RegistrationRequestsModule,
     AuthModule,
     SecurityQuestionsModule,
+    
+    // 👇 On ajoute l'IA à la liste des imports existants
+    AiModule,
   ],
 })
 export class AppModule implements NestModule {
