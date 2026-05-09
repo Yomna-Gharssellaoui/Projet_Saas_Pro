@@ -51,7 +51,8 @@ export class AiModel implements OnModuleInit {
       batchSize: 32,
       shuffle: true,
       callbacks: {
-        onEpochEnd: (epoch, logs) => {
+        onEpochEnd: (epoch: number, logs: any) => {
+
           if ((epoch + 1) % 10 === 0) {
             this.logger.log(`Epoch ${epoch + 1}/50 - Training Error (Loss): ${(logs?.loss || 0).toFixed(4)}`);
           }
