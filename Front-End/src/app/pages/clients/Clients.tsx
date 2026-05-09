@@ -61,6 +61,7 @@ import { toast } from "sonner";
 import type { Client } from "@/shared/lib/mockData";
 import { useBusinessContext } from "@/shared/contexts/BusinessContext";
 import { ClientsApi } from "@/shared/lib/services/clients";
+import { RiskBadge } from "@/app/components/molecules/RiskBadge";
 
 type ClientStatusFilter = "all" | "with-balance" | "clear";
 type SortOption = "recent" | "name" | "revenue" | "outstanding";
@@ -990,6 +991,7 @@ export function Clients() {
                 <TableHead className="min-w-[220px] text-muted-foreground">Contact</TableHead>
                 <TableHead className="min-w-[150px] text-muted-foreground">Revenue</TableHead>
                 <TableHead className="min-w-[150px] text-muted-foreground">Outstanding</TableHead>
+                <TableHead className="min-w-[130px] text-muted-foreground">Risk</TableHead>
                 <TableHead className="min-w-[130px] text-muted-foreground">Status</TableHead>
                 <TableHead className="min-w-[180px] text-right text-muted-foreground">
                   Actions
@@ -1000,7 +1002,7 @@ export function Clients() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-32 text-center">
+                  <TableCell colSpan={7} className="h-32 text-center">
                     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Loading clients...
@@ -1009,7 +1011,7 @@ export function Clients() {
                 </TableRow>
               ) : filteredClients.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-40">
+                  <TableCell colSpan={7} className="h-40">
                     <div className="flex flex-col items-center justify-center text-center">
                       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
                         <Users className="h-6 w-6 text-muted-foreground" />
@@ -1099,6 +1101,10 @@ export function Clients() {
                         >
                           {formatMoney(outstanding)}
                         </span>
+                      </TableCell>
+
+                      <TableCell className="py-4">
+                        <RiskBadge clientId={client.id} />
                       </TableCell>
 
                       <TableCell className="py-4">
