@@ -7,18 +7,21 @@ import { RequireCompanySetup } from '@/shared/components/RequireCompanySetup';
 // Communication
 import { Communication } from '@/back-office/pages/communication/Communication';
 
+// Support Chat (Separate from Communication)
+import { BusinessOwnerSupport } from '@/app/pages/support/BusinessOwnerSupport';
+
 // Platform support
 import PlatformSupport from '@/back-office/pages/admin/PlatformSupport';
 
 // Front-office
 import { LandingPage } from '@/front-office/pages/LandingPage';
-import { PayPalPaymentPage } from '@/app/pages/PayPalPaymentPage';
+import { MockPaymentPage } from '@/front-office/pages/MockPaymentPage';
 
 // Layouts
 import { AuthLayout } from '@/back-office/templates/AuthLayout';
 import { DashboardLayout } from '@/back-office/templates/DashboardLayout';
 import { PlatformAdminLayout } from '@/back-office/templates/PlatformAdminLayout';
-import AICoach from "@/app/pages/ai/AICoach";
+
 // Auth Pages
 import { Login } from '@/app/pages/auth/Login';
 import { Register } from '@/back-office/pages/auth/Register';
@@ -40,6 +43,8 @@ import { CreateExpense } from '@/app/pages/expenses/CreateExpense';
 import { Clients } from '@/app/pages/clients/Clients';
 import { ClientDetails } from '@/app/pages/clients/ClientDetails';
 import { Team } from '@/app/pages/team/Team';
+import { TeamAIInsights } from '@/app/pages/team/TeamAIInsights';
+import { HRRiskAnalytics } from '@/app/pages/team/HRRiskAnalytics';
 import { Reports } from '@/app/pages/reports/Reports';
 import { Settings } from '@/app/pages/settings/Settings';
 
@@ -54,10 +59,7 @@ import RegistrationRequestsAdmin from '@/app/pages/admin/RegistrationRequestsAdm
 import { AIInsights } from '@/app/pages/ai/AIInsights';
 import { CashFlowForecast } from '@/app/pages/ai/CashFlowForecast';
 import { InvoiceLateRisk } from '@/app/pages/ai/InvoiceLateRisk';
-import { InvoiceCollectionCopilot } from '@/app/pages/ai/InvoiceCollectionCopilot';
-import { WhatIfSimulator } from '@/app/pages/ai/WhatIfSimulator';
-import AIReport from "@/app/pages/ai/AIReport";
-import { InvoiceChatbot } from '@/app/pages/ai/InvoiceChatbot';
+
 // Company setup
 import CompanySetup from '@/app/pages/businesses/CompanySetup';
 
@@ -66,8 +68,7 @@ export const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/auth/oauth-callback', element: <OAuthCallback /> },
   { path: '/oauth-success', element: <OAuthSuccess /> },
-  { path: '/mock-payment/:id', element: <PayPalPaymentPage /> },
-  { path: '/paypal-payment/:id', element: <PayPalPaymentPage /> },
+  { path: '/mock-payment/:id', element: <MockPaymentPage /> },
 
   // AUTH
   {
@@ -142,6 +143,15 @@ export const router = createBrowserRouter([
     children: [
       { path: 'company/setup', element: <CompanySetup /> },
       { path: 'communication', element: <Communication /> },
+      // Support Chat avec IA
+      {
+        path: "support",
+        element: (
+          <RequireCompanySetup>
+            <BusinessOwnerSupport />
+          </RequireCompanySetup>
+        ),
+      },
 
       {
         index: true,
@@ -175,36 +185,6 @@ export const router = createBrowserRouter([
         ),
       },
       {
-  path: "ai-coach",
-  element: (
-    <RequireCompanySetup>
-      <RequirePermission permission="ai:read">
-        <AICoach />
-      </RequirePermission>
-    </RequireCompanySetup>
-  ),
-},
-{
-  path: "ai-report",
-  element: (
-    <RequireCompanySetup>
-      <RequirePermission permission="ai:read">
-        <AIReport />
-      </RequirePermission>
-    </RequireCompanySetup>
-  ),
-},
-      {
-        path: 'invoice-chatbot',
-        element: (
-          <RequireCompanySetup>
-            <RequirePermission permission="ai:read">
-              <InvoiceChatbot />
-            </RequirePermission>
-          </RequireCompanySetup>
-        ),
-      },
-      {
         path: 'cash-flow-forecast',
         element: (
           <RequireCompanySetup>
@@ -220,26 +200,6 @@ export const router = createBrowserRouter([
           <RequireCompanySetup>
             <RequirePermission permission="ai:read">
               <InvoiceLateRisk />
-            </RequirePermission>
-          </RequireCompanySetup>
-        ),
-      },
-      {
-        path: 'invoice-collection-copilot',
-        element: (
-          <RequireCompanySetup>
-            <RequirePermission permission="ai:read">
-              <InvoiceCollectionCopilot />
-            </RequirePermission>
-          </RequireCompanySetup>
-        ),
-      },
-      {
-        path: 'what-if-simulator',
-        element: (
-          <RequireCompanySetup>
-            <RequirePermission permission="ai:read">
-              <WhatIfSimulator />
             </RequirePermission>
           </RequireCompanySetup>
         ),
@@ -328,6 +288,30 @@ export const router = createBrowserRouter([
           <RequireCompanySetup>
             <RequirePermission permission="team:read">
               <Team />
+            </RequirePermission>
+          </RequireCompanySetup>
+        ),
+      },
+
+      // TEAM AI INSIGHTS
+      {
+        path: "team/ai-insights",
+        element: (
+          <RequireCompanySetup>
+            <RequirePermission permission="team:read">
+              <TeamAIInsights />
+            </RequirePermission>
+          </RequireCompanySetup>
+        ),
+      },
+
+      // HR RISK ANALYTICS (Real ML)
+      {
+        path: "team/hr-risk",
+        element: (
+          <RequireCompanySetup>
+            <RequirePermission permission="team:read">
+              <HRRiskAnalytics />
             </RequirePermission>
           </RequireCompanySetup>
         ),

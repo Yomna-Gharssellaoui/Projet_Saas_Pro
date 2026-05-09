@@ -72,7 +72,7 @@ type SortOption =
 const STATUS_CONFIG: Record<InvoiceStatus, { label: string; className: string }> = {
   draft: {
     label: 'Draft',
-    className: 'bg-muted text-foreground border-border',
+    className: 'bg-gray-100 text-gray-800 border-gray-200',
   },
   sent: {
     label: 'Sent',
@@ -523,8 +523,8 @@ export function Invoices() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Invoices</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Manage, track and monitor all your invoices</p>
+          <h1 className="text-3xl font-bold text-gray-900">Invoices</h1>
+          <p className="mt-1 text-sm text-gray-500">Manage, track and monitor all your invoices</p>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -554,14 +554,14 @@ export function Invoices() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Total Invoiced</div>
+            <div className="text-sm text-gray-500">Total Invoiced</div>
             <div className="mt-1 text-2xl font-bold">{formatCurrency(totals.totalInvoiced)}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Collected</div>
+            <div className="text-sm text-gray-500">Collected</div>
             <div className="mt-1 text-2xl font-bold text-green-600">
               {formatCurrency(totals.totalPaid)}
             </div>
@@ -570,7 +570,7 @@ export function Invoices() {
 
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Pending</div>
+            <div className="text-sm text-gray-500">Pending</div>
             <div className="mt-1 text-2xl font-bold text-blue-600">
               {formatCurrency(totals.pending)}
             </div>
@@ -579,7 +579,7 @@ export function Invoices() {
 
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Overdue</div>
+            <div className="text-sm text-gray-500">Overdue</div>
             <div className="mt-1 text-2xl font-bold text-red-600">
               {formatCurrency(totals.overdue)}
             </div>
@@ -588,14 +588,14 @@ export function Invoices() {
 
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Drafts</div>
-            <div className="mt-1 text-2xl font-bold text-foreground">{totals.draftCount}</div>
+            <div className="text-sm text-gray-500">Drafts</div>
+            <div className="mt-1 text-2xl font-bold text-gray-800">{totals.draftCount}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">Overdue Count</div>
+            <div className="text-sm text-gray-500">Overdue Count</div>
             <div className="mt-1 text-2xl font-bold text-red-600">{totals.overdueCount}</div>
           </CardContent>
         </Card>
@@ -605,7 +605,7 @@ export function Invoices() {
         <CardContent className="pt-6">
           <div className="flex flex-col gap-4 xl:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 placeholder="Search by invoice number or client..."
                 value={searchTerm}
@@ -614,19 +614,17 @@ export function Invoices() {
               />
             </div>
 
-            <div className="flex flex-col gap-1.5 w-full xl:w-[180px]">
-              <label htmlFor="status-filter" className="text-xs font-medium text-muted-foreground ml-1">Status</label>
-              <Select
-                value={statusFilter}
-                onValueChange={(value) => {
-                  setStatusFilter(value);
-                  setPage(1);
-                }}
-              >
-                <SelectTrigger id="status-filter" className="w-full" aria-label="Filter by status">
-                  <Filter className="mr-2 h-4 w-4" />
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => {
+                setStatusFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full xl:w-[180px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
@@ -637,15 +635,12 @@ export function Invoices() {
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
-          </div>
 
-            <div className="flex flex-col gap-1.5 w-full xl:w-[220px]">
-              <label htmlFor="sort-by" className="text-xs font-medium text-muted-foreground ml-1">Sort Order</label>
-              <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-                <SelectTrigger id="sort-by" className="w-full" aria-label="Sort by">
-                  <ArrowUpDown className="mr-2 h-4 w-4" />
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
+            <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+              <SelectTrigger className="w-full xl:w-[220px]">
+                <ArrowUpDown className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest</SelectItem>
                 <SelectItem value="oldest">Oldest</SelectItem>
@@ -657,20 +652,17 @@ export function Invoices() {
                 <SelectItem value="client_desc">Client: Z → A</SelectItem>
               </SelectContent>
             </Select>
-          </div>
 
-            <div className="flex flex-col gap-1.5 w-full xl:w-[120px]">
-              <label htmlFor="page-size" className="text-xs font-medium text-muted-foreground ml-1">Rows</label>
-              <Select
-                value={pageSize}
-                onValueChange={(value) => {
-                  setPageSize(value);
-                  setPage(1);
-                }}
-              >
-                <SelectTrigger id="page-size" className="w-full" aria-label="Rows per page">
-                  <SelectValue placeholder="Rows" />
-                </SelectTrigger>
+            <Select
+              value={pageSize}
+              onValueChange={(value) => {
+                setPageSize(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full xl:w-[120px]">
+                <SelectValue placeholder="Rows" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="5">5 / page</SelectItem>
                 <SelectItem value="10">10 / page</SelectItem>
@@ -678,14 +670,11 @@ export function Invoices() {
                 <SelectItem value="50">50 / page</SelectItem>
               </SelectContent>
             </Select>
-          </div>
 
-            <div className="flex items-end">
-              <Button variant="outline" onClick={resetFilters} className="h-9">
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Reset
-              </Button>
-            </div>
+            <Button variant="outline" onClick={resetFilters}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Reset
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -693,7 +682,7 @@ export function Invoices() {
       {canManageInvoices && selectedIds.length > 0 && (
         <Card>
           <CardContent className="flex flex-col gap-3 pt-6 md:flex-row md:items-center md:justify-between">
-            <div className="text-sm text-muted-foreground">{selectedIds.length} invoice(s) selected</div>
+            <div className="text-sm text-gray-600">{selectedIds.length} invoice(s) selected</div>
 
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={() => handleBulkStatusUpdate('sent')}>
@@ -727,15 +716,14 @@ export function Invoices() {
                 <TableRow>
                   {canManageInvoices && (
                     <TableHead className="w-[50px]">
-                        <input
-                          type="checkbox"
-                          aria-label="Select all invoices on this page"
-                          checked={
-                            paginatedInvoices.length > 0 &&
-                            paginatedInvoices.every((inv) => selectedIds.includes(inv.id))
-                          }
-                          onChange={toggleSelectAllCurrentPage}
-                        />
+                      <input
+                        type="checkbox"
+                        checked={
+                          paginatedInvoices.length > 0 &&
+                          paginatedInvoices.every((inv) => selectedIds.includes(inv.id))
+                        }
+                        onChange={toggleSelectAllCurrentPage}
+                      />
                     </TableHead>
                   )}
                   <TableHead>Invoice #</TableHead>
@@ -755,7 +743,7 @@ export function Invoices() {
                   <TableRow>
                     <TableCell
                       colSpan={canManageInvoices ? 10 : 9}
-                      className="py-8 text-center text-muted-foreground"
+                      className="py-8 text-center text-gray-500"
                     >
                       Loading invoices...
                     </TableCell>
@@ -765,8 +753,8 @@ export function Invoices() {
                     <TableCell colSpan={canManageInvoices ? 10 : 9} className="py-10">
                       <div className="flex flex-col items-center justify-center text-center">
                         <FileText className="mb-3 h-10 w-10 text-gray-300" />
-                        <div className="text-lg font-medium text-foreground">No invoices found</div>
-                        <div className="mt-1 text-sm text-muted-foreground">
+                        <div className="text-lg font-medium text-gray-700">No invoices found</div>
+                        <div className="mt-1 text-sm text-gray-500">
                           Try changing filters or create a new invoice.
                         </div>
                         {canManageInvoices && (
@@ -797,7 +785,6 @@ export function Invoices() {
                           <TableCell>
                             <input
                               type="checkbox"
-                              aria-label={`Select invoice ${invoice.invoiceNumber}`}
                               checked={selectedIds.includes(invoice.id)}
                               onChange={() => toggleSelectOne(invoice.id)}
                             />
@@ -826,20 +813,13 @@ export function Invoices() {
 
                         <TableCell className="min-w-[140px]">
                           <div className="space-y-1">
-                            <div 
-                              className="h-2 w-full rounded-full bg-muted"
-                              role="progressbar"
-                              aria-valuenow={progress}
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                              aria-label={`Payment progress: ${progress.toFixed(0)}%`}
-                            >
+                            <div className="h-2 w-full rounded-full bg-gray-100">
                               <div
                                 className="h-2 rounded-full bg-gray-900 transition-all"
                                 style={{ width: `${progress}%` }}
                               />
                             </div>
-                            <div className="text-xs text-muted-foreground">{progress.toFixed(0)}%</div>
+                            <div className="text-xs text-gray-500">{progress.toFixed(0)}%</div>
                           </div>
                         </TableCell>
 
@@ -850,7 +830,6 @@ export function Invoices() {
                               size="sm"
                               onClick={() => navigate(`/dashboard/invoices/${invoice.id}`)}
                               title="View invoice"
-                              aria-label={`View invoice ${invoice.invoiceNumber}`}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -860,7 +839,6 @@ export function Invoices() {
                               size="sm"
                               onClick={() => handleDownloadPDF(invoice.id)}
                               title="Download PDF"
-                              aria-label={`Download PDF for invoice ${invoice.invoiceNumber}`}
                             >
                               <Download className="h-4 w-4" />
                             </Button>
@@ -875,7 +853,6 @@ export function Invoices() {
                                   )
                                 }
                                 title="View invoice risk"
-                                aria-label={`View risk analysis for invoice ${invoice.invoiceNumber}`}
                               >
                                 <ShieldAlert className="h-4 w-4" />
                               </Button>
@@ -888,7 +865,6 @@ export function Invoices() {
                                 disabled={updatingId === invoice.id}
                                 onClick={() => handleChangeStatus(invoice.id, 'sent')}
                                 title="Send invoice"
-                                aria-label={`Send invoice ${invoice.invoiceNumber} to client`}
                               >
                                 <Send className="h-4 w-4" />
                               </Button>
@@ -901,7 +877,6 @@ export function Invoices() {
                                 disabled={updatingId === invoice.id}
                                 onClick={() => handleChangeStatus(invoice.id, 'paid')}
                                 title="Mark as paid"
-                                aria-label={`Mark invoice ${invoice.invoiceNumber} as paid`}
                               >
                                 <CheckCircle className="h-4 w-4" />
                               </Button>
@@ -914,7 +889,6 @@ export function Invoices() {
                                 disabled={updatingId === invoice.id}
                                 onClick={() => handleChangeStatus(invoice.id, 'cancelled')}
                                 title="Cancel invoice"
-                                aria-label={`Cancel invoice ${invoice.invoiceNumber}`}
                               >
                                 <XCircle className="h-4 w-4" />
                               </Button>
@@ -931,7 +905,7 @@ export function Invoices() {
 
           {!loading && filteredAndSortedInvoices.length > 0 && (
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-gray-500">
                 Page {page} / {totalPages} — {filteredAndSortedInvoices.length} result(s)
               </div>
 

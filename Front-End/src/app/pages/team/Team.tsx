@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
@@ -45,6 +46,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Lock,
+  Brain,
 } from "lucide-react";
 import { roleLabels } from "@/app/lib/mockData";
 import type { TeamMember } from "@/shared/lib/mockData";
@@ -180,6 +182,7 @@ type InviteErrors = {
 };
 
 export function Team() {
+  const navigate = useNavigate();
   const { currentBusiness } = useBusinessContext();
   const { user } = useAuth();
 
@@ -324,7 +327,7 @@ export function Team() {
     const variants: Record<string, string> = {
       active: "bg-green-100 text-green-800 border-green-200",
       invited: "bg-blue-100 text-blue-800 border-blue-200",
-      inactive: "bg-muted text-foreground border-border",
+      inactive: "bg-gray-100 text-gray-800 border-gray-200",
     };
     return variants[status] || variants.inactive;
   };
@@ -452,30 +455,40 @@ export function Team() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Team</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Team</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Manage team members, roles and permissions for your business
           </p>
         </div>
 
-        <Dialog
-          open={isDialogOpen}
-          onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetInviteForm();
-          }}
-        >
-          <DialogTrigger asChild>
-            <Button
-              disabled={!isOwner || !currentBusiness?.id}
-              className="shadow-sm"
-            >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Invite Member
-            </Button>
-          </DialogTrigger>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button
+            onClick={() => navigate('/dashboard/team/hr-risk')}
+            variant="outline"
+            className="shadow-sm border-purple-200 text-purple-700 hover:bg-purple-50"
+          >
+            <Brain className="mr-2 h-4 w-4 text-purple-600" />
+            HR Risk Analytics
+          </Button>
 
-          <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) resetInviteForm();
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button
+                disabled={!isOwner || !currentBusiness?.id}
+                className="shadow-sm"
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Invite Member
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -547,31 +560,30 @@ export function Team() {
                     </div>
                   </div>
 
-                    <div className="space-y-2 flex flex-col">
-                      <Label htmlFor="member-role">Role</Label>
-                      <Select
-                        value={newMember.role}
-                        onValueChange={(value) => handleRoleChange(value as RoleType)}
+                  <div className="space-y-2">
+                    <Label htmlFor="member-role">Role</Label>
+                    <Select
+                      value={newMember.role}
+                      onValueChange={(value) => handleRoleChange(value as RoleType)}
+                    >
+                      <SelectTrigger
+                        id="member-role"
+                        className={
+                          touched.role && errors.role
+                            ? "border-red-500 focus:ring-red-500"
+                            : ""
+                        }
                       >
-                        <SelectTrigger
-                          id="member-role"
-                          aria-label="Select member role"
-                          className={
-                            touched.role && errors.role
-                              ? "border-red-500 focus:ring-red-500"
-                              : ""
-                          }
-                        >
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="business_admin">
-                            Business Administrator
-                          </SelectItem>
-                          <SelectItem value="accountant">Accountant</SelectItem>
-                          <SelectItem value="team_member">Team Member</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="business_admin">
+                          Business Administrator
+                        </SelectItem>
+                        <SelectItem value="accountant">Accountant</SelectItem>
+                        <SelectItem value="team_member">Team Member</SelectItem>
+                      </SelectContent>
+                    </Select>
 
                     {touched.role && errors.role && (
                       <p className="flex items-center gap-1 text-xs text-red-600">
@@ -580,8 +592,8 @@ export function Team() {
                       </p>
                     )}
 
-                    <div className="rounded-xl border bg-card px-4 py-3 text-sm text-muted-foreground">
-                      <span className="font-medium text-foreground">Preset loaded:</span>{" "}
+                    <div className="rounded-xl border bg-white px-4 py-3 text-sm text-muted-foreground">
+                      <span className="font-medium text-gray-900">Preset loaded:</span>{" "}
                       permissions are auto-suggested based on the selected role.
                       You can still customize them manually.
                     </div>
@@ -592,7 +604,7 @@ export function Team() {
               <div className="space-y-4">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h3 className="text-base font-semibold text-foreground">
+                    <h3 className="text-base font-semibold text-gray-900">
                       Permissions
                     </h3>
                     <p className="text-sm text-muted-foreground">
@@ -626,7 +638,7 @@ export function Team() {
                               className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition hover:bg-muted/40 ${
                                 selectedPermissions.includes(perm)
                                   ? "border-primary/30 bg-primary/5"
-                                  : "border-border bg-card"
+                                  : "border-border bg-white"
                               }`}
                             >
                               <Checkbox
@@ -635,7 +647,7 @@ export function Team() {
                                 className="mt-0.5"
                               />
                               <div className="space-y-1">
-                                <p className="text-sm font-medium text-foreground">
+                                <p className="text-sm font-medium text-gray-900">
                                   {getPermissionLabel(perm)}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
@@ -662,25 +674,25 @@ export function Team() {
 
               <Card className="border-dashed bg-gradient-to-r from-primary/5 to-transparent shadow-none">
                 <CardContent className="flex flex-col gap-3 p-4 text-sm">
-                  <div className="flex items-center gap-2 font-medium text-foreground">
+                  <div className="flex items-center gap-2 font-medium text-gray-900">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                     Invitation summary
                   </div>
                   <div className="grid gap-2 text-muted-foreground sm:grid-cols-2">
                     <p>
-                      <span className="font-medium text-foreground">Name:</span>{" "}
+                      <span className="font-medium text-gray-900">Name:</span>{" "}
                       {newMember.name.trim() || "-"}
                     </p>
                     <p>
-                      <span className="font-medium text-foreground">Email:</span>{" "}
+                      <span className="font-medium text-gray-900">Email:</span>{" "}
                       {newMember.email.trim() || "-"}
                     </p>
                     <p>
-                      <span className="font-medium text-foreground">Role:</span>{" "}
+                      <span className="font-medium text-gray-900">Role:</span>{" "}
                       {roleLabels?.[newMember.role] || newMember.role}
                     </p>
                     <p>
-                      <span className="font-medium text-foreground">Permissions:</span>{" "}
+                      <span className="font-medium text-gray-900">Permissions:</span>{" "}
                       {selectedPermissions.length}
                     </p>
                   </div>
@@ -711,8 +723,9 @@ export function Team() {
                 )}
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -722,7 +735,7 @@ export function Team() {
               <Users className="h-4 w-4" />
               Total Members
             </div>
-            <div className="mt-2 text-2xl font-bold text-foreground">{stats.total}</div>
+            <div className="mt-2 text-2xl font-bold text-gray-900">{stats.total}</div>
           </CardContent>
         </Card>
 
@@ -752,7 +765,7 @@ export function Team() {
         <CardContent className="pt-6">
           <div className="flex flex-col gap-4 lg:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 placeholder="Search by member name or email..."
                 value={searchTerm}
@@ -762,11 +775,10 @@ export function Team() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="w-full lg:w-[220px] flex flex-col gap-1.5">
-                <label htmlFor="role-filter" className="text-xs font-medium text-muted-foreground ml-1">Role</label>
+              <div className="w-full lg:w-[220px]">
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger id="role-filter" aria-label="Filter by role">
-                    <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
+                  <SelectTrigger>
+                    <Filter className="mr-2 h-4 w-4 text-gray-400" />
                     <SelectValue placeholder="Filter by role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -778,10 +790,9 @@ export function Team() {
                 </Select>
               </div>
 
-              <div className="w-full lg:w-[180px] flex flex-col gap-1.5">
-                <label htmlFor="status-filter" className="text-xs font-medium text-muted-foreground ml-1">Status</label>
+              <div className="w-full lg:w-[180px]">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger id="status-filter" aria-label="Filter by status">
+                  <SelectTrigger>
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -845,7 +856,7 @@ export function Team() {
                           </Avatar>
 
                           <div>
-                            <p className="font-medium text-foreground">{member.name}</p>
+                            <p className="font-medium text-gray-900">{member.name}</p>
                             <p className="text-sm text-muted-foreground">{member.email}</p>
                           </div>
                         </div>
@@ -853,7 +864,7 @@ export function Team() {
 
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-muted-foreground" />
+                          <Shield className="h-4 w-4 text-gray-400" />
                           <span>{roleLabels?.[member.role] || member.role}</span>
                         </div>
                       </TableCell>
@@ -893,7 +904,6 @@ export function Team() {
                             disabled={removingId === member.id}
                             onClick={() => handleRemoveMember(member.id)}
                             className="text-red-600 hover:text-red-700"
-                            aria-label={`Remove ${member.name} from team`}
                           >
                             {removingId === member.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
@@ -912,5 +922,5 @@ export function Team() {
         </CardContent>
       </Card>
     </div>
-  );
+  );      
 }

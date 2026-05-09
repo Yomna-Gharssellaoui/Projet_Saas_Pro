@@ -2,27 +2,10 @@
   "name": "@figma/my-make-file",
   "private": true,
   "version": "0.0.1",
-  "main": "electron.js",
   "type": "module",
   "scripts": {
-    "build": "node --max-old-space-size=1024 node_modules/.bin/vite build",
-    "electron": "electron .",
-    "desktop": "concurrently \"npm run frontend\" \"npm run electron\"",
-    "frontend": "vite",
-    "dist": "npm run build && electron-builder",
-    "dev": "vite",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
-  },
-  "build": {
-    "electronVersion": "30.0.0",
-    "appId": "com.bizManagement.app",
-    "productName": "bizManagement",
-    "files": [
-      "dist/**/*",
-      "electron.js"
-    ]
+    "build": "vite build",
+    "dev": "vite"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -30,7 +13,6 @@
     "@marsidev/react-turnstile": "^1.4.2",
     "@mui/icons-material": "7.3.5",
     "@mui/material": "7.3.5",
-    "@paypal/react-paypal-js": "^9.2.0",
     "@popperjs/core": "2.11.8",
     "@radix-ui/react-accordion": "1.2.3",
     "@radix-ui/react-alert-dialog": "1.1.6",
@@ -58,6 +40,7 @@
     "@radix-ui/react-toggle": "1.1.2",
     "@radix-ui/react-toggle-group": "1.1.2",
     "@radix-ui/react-tooltip": "1.1.8",
+    "@vladmandic/face-api": "^1.7.15",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
@@ -89,15 +72,8 @@
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
     "@vitejs/plugin-react": "4.7.0",
-    "electron": "^41.3.0",
-    "electron-builder": "^26.8.1",
     "tailwindcss": "4.1.12",
-    "vite": "6.3.5",
-    "vitest": "^2.0.0",
-    "@vitest/coverage-v8": "^2.0.0",
-    "jsdom": "^24.0.0",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/jest-dom": "^6.4.0"
+    "vite": "6.3.5"
   },
   "peerDependencies": {
     "react": "18.3.1",

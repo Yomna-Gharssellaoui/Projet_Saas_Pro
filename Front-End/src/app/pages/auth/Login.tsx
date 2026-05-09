@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/shared/contexts/AuthContext";
+import { FaceIdModal } from "@/shared/components/FaceIdModal";
 
 type Role =
   | "platform_admin"
@@ -101,6 +102,7 @@ export function Login() {
   const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(
     null
   );
+  const [faceModalOpen, setFaceModalOpen] = useState(false);
 
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [formError, setFormError] = useState("");
@@ -113,7 +115,7 @@ export function Login() {
   );
 
   const backendUrl = useMemo(
-    () => import.meta.env.VITE_API_URL || "http://localhost:3001/api",
+    () => import.meta.env.VITE_BACKEND_URL || "http://localhost:3000/api",
     []
   );
 
@@ -265,23 +267,23 @@ export function Login() {
   }, []);
 
   return (
-    <Card className="w-full rounded-3xl border border-border/80 bg-card/95 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+    <Card className="w-full rounded-3xl border border-slate-200/80 bg-white/95 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm">
       <CardHeader className="space-y-4 pb-6">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
           <ShieldCheck className="h-7 w-7 text-primary" />
         </div>
 
         <div className="text-center">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600">
             <Sparkles className="h-3.5 w-3.5" />
             Secure business access
           </div>
 
-          <CardTitle className="text-3xl font-bold tracking-tight text-foreground">
+          <CardTitle className="text-3xl font-bold tracking-tight text-slate-900">
             Welcome back
           </CardTitle>
 
-          <CardDescription className="mt-2 text-sm leading-6 text-muted-foreground">
+          <CardDescription className="mt-2 text-sm leading-6 text-slate-500">
             Sign in to access your business workspace and manage your operations
             securely.
           </CardDescription>
@@ -293,7 +295,7 @@ export function Login() {
           <Button
             type="button"
             variant="outline"
-            className="h-11 w-full rounded-xl border-border bg-card text-foreground shadow-sm transition hover:bg-background"
+            className="h-11 w-full rounded-xl border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
             onClick={() => startOAuth("google")}
             disabled={isSubmitting}
           >
@@ -310,7 +312,7 @@ export function Login() {
           <Button
             type="button"
             variant="outline"
-            className="h-11 w-full rounded-xl border-border bg-card text-foreground shadow-sm transition hover:bg-background"
+            className="h-11 w-full rounded-xl border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
             onClick={() => startOAuth("github")}
             disabled={isSubmitting}
           >
@@ -321,14 +323,24 @@ export function Login() {
             )}
             Continue with GitHub
           </Button>
+
+          <Button
+            type="button"
+            className="h-11 w-full rounded-xl bg-indigo-600 text-white shadow-md transition hover:bg-indigo-700"
+            onClick={() => setFaceModalOpen(true)}
+            disabled={isSubmitting}
+          >
+            <ShieldCheck className="mr-2 h-4 w-4" />
+            🔐 Se connecter avec Face ID
+          </Button>
         </div>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
+            <div className="w-full border-t border-slate-200" />
           </div>
           <div className="relative flex justify-center text-[11px] uppercase tracking-[0.2em]">
-            <span className="bg-card px-3 text-muted-foreground">
+            <span className="bg-white px-3 text-slate-400">
               Or continue with email
             </span>
           </div>
@@ -336,12 +348,12 @@ export function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-foreground">
+            <Label htmlFor="email" className="text-sm font-medium text-slate-700">
               Email address
             </Label>
 
             <div className="relative">
-              <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 id="email"
                 type="email"
@@ -355,7 +367,7 @@ export function Login() {
                 required
                 autoComplete="username"
                 disabled={isSubmitting}
-                className="h-12 rounded-xl border-border bg-background/60 pl-10 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-card"
+                className="h-12 rounded-xl border-slate-200 bg-slate-50/60 pl-10 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:bg-white"
               />
             </div>
 
@@ -368,7 +380,7 @@ export function Login() {
             <div className="flex items-center justify-between gap-3">
               <Label
                 htmlFor="password"
-                className="text-sm font-medium text-foreground"
+                className="text-sm font-medium text-slate-700"
               >
                 Password
               </Label>
@@ -382,7 +394,7 @@ export function Login() {
             </div>
 
             <div className="relative">
-              <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -396,14 +408,14 @@ export function Login() {
                 required
                 autoComplete="current-password"
                 disabled={isSubmitting}
-                className="h-12 rounded-xl border-border bg-background/60 pl-10 pr-12 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-card"
+                className="h-12 rounded-xl border-slate-200 bg-slate-50/60 pl-10 pr-12 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:bg-white"
               />
 
               <button
                 type="button"
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
                 disabled={isSubmitting}
               >
                 {showPassword ? (
@@ -420,24 +432,24 @@ export function Login() {
           </div>
 
           <div className="flex items-center justify-between gap-3">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground select-none">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 select-none">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
                 disabled={isSubmitting}
-                className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
               />
               Remember me
             </label>
 
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-slate-400">
               Protected by Turnstile
             </span>
           </div>
 
           {siteKey ? (
-            <div className="overflow-hidden rounded-2xl border border-border bg-background p-3">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3">
               <Turnstile
                 siteKey={siteKey}
                 onSuccess={(token) => setCaptchaToken(token)}
@@ -475,7 +487,7 @@ export function Login() {
             )}
           </Button>
 
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-sm text-slate-500">
             Don&apos;t have an account?{" "}
             <Link
               to="/auth/register"
@@ -486,6 +498,20 @@ export function Login() {
           </div>
         </form>
       </CardContent>
+
+      {/* FACE ID MODAL */}
+      <FaceIdModal
+        open={faceModalOpen}
+        mode="login"
+        onClose={() => setFaceModalOpen(false)}
+        onSuccess={(token) => {
+          if (token) {
+            navigate(getRedirectPath("business_owner", fromPath), {
+              replace: true,
+            });
+          }
+        }}
+      />
     </Card>
   );
 }

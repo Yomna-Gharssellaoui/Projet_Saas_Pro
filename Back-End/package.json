@@ -2,25 +2,17 @@
   "name": "nest-saas-backend",
   "version": "1.0.0",
   "description": "NestJS + PostgreSQL + TypeORM backend (MVC) for Business Management SaaS Platform",
-  "main": "electron.js",
   "scripts": {
     "start": "nest start",
     "start:dev": "nest start --watch",
+    "start:dev:ml": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-dev-ml.ps1",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "build": "nest build",
-    "frontend": "vite",
-    "electron": "electron .",
-    "desktop": "concurrently \"npm run frontend\" \"npm run electron\"",
     "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "test": "node --max-old-space-size=512 node_modules/.bin/jest --runInBand --passWithNoTests",
-    "test:watch": "jest --watch",
-    "test:cov": "node --max-old-space-size=512 node_modules/.bin/jest --runInBand --passWithNoTests --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
-    "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^10.3.0",
     "@nestjs/config": "^3.3.0",
     "@nestjs/core": "^10.3.0",
@@ -29,13 +21,13 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.22",
     "@nestjs/platform-socket.io": "^10.4.22",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.4.22",
-    "@willsoto/nestjs-prometheus": "^6.1.0",
-    "axios": "^1.16.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "face-api.js": "^0.22.2",
     "multer": "^2.0.2",
     "nodemailer": "^8.0.1",
     "passport": "^0.7.0",
@@ -43,7 +35,6 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.12.0",
-    "prom-client": "^15.1.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.3",
@@ -54,38 +45,15 @@
     "@nestjs/schematics": "^10.1.2",
     "@nestjs/testing": "^10.3.0",
     "@types/bcrypt": "^5.0.2",
-    "@types/jest": "^29.5.12",
     "@types/multer": "^2.0.0",
     "@types/node": "^20.11.30",
     "@types/nodemailer": "^7.0.10",
     "@types/passport-github2": "^1.2.9",
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/passport-jwt": "^4.0.1",
-    "concurrently": "^9.0.0",
-    "electron": "^30.0.0",
     "eslint": "^8.57.0",
-    "jest": "^29.7.0",
-    "jest-junit": "^17.0.0",
     "prettier": "^3.2.5",
-    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

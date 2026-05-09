@@ -13,11 +13,11 @@ export class MessageEntity {
 
   @Index()
   @Column()
-  businessId!: string;
+  businessId!: string; // tenant isolation
 
   @Index()
   @Column()
-  channelId!: string;
+  channelId!: string; // "general", "accounting", or DM id
 
   @Column()
   senderId!: string;
@@ -29,32 +29,10 @@ export class MessageEntity {
   content!: string;
 
   @Column({ default: 'text' })
-  type!: 'text' | 'file' | 'system' | 'voice';
+  type!: 'text' | 'file' | 'system';
 
   @Column({ nullable: true })
   fileUrl?: string;
-
-  // --- Reactions: { "👍": ["userId1","userId2"], "🎉": ["userId3"] } ---
-  @Column({ type: 'jsonb', default: {} })
-  reactions!: Record<string, string[]>;
-
-  // --- Reply / Thread ---
-  @Column({ nullable: true })
-  replyToId?: string;
-
-  @Column({ nullable: true })
-  replyToContent?: string;
-
-  @Column({ nullable: true })
-  replyToSender?: string;
-
-  // --- Pinned ---
-  @Column({ default: false })
-  isPinned!: boolean;
-
-  // --- Read receipts ---
-  @Column({ type: 'text', array: true, default: () => "ARRAY[]::text[]" })
-  readBy!: string[];
 
   @CreateDateColumn()
   createdAt!: Date;

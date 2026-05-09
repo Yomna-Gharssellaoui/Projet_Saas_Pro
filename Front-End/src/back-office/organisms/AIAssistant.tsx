@@ -34,7 +34,6 @@ export function AIAssistant() {
       {/* Floating AI Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Open AI Assistant"
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 z-40"
       >
         <Sparkles className="h-6 w-6" />
@@ -42,19 +41,18 @@ export function AIAssistant() {
 
       {/* AI Panel */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 h-[600px] bg-card rounded-lg shadow-2xl border border-border z-40 flex flex-col">
+        <div className="fixed bottom-24 right-6 w-96 h-[600px] bg-white rounded-lg shadow-2xl border border-gray-200 z-40 flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-lg">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-lg">
             <div className="flex items-center space-x-2">
               <Sparkles className="h-5 w-5 text-white" />
               <h3 className="font-semibold text-white">AI Business Assistant</h3>
             </div>
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={() => setIsOpen(false)}
-              aria-label="Close AI Assistant"
-              className="text-white hover:bg-card/20"
+              className="text-white hover:bg-white/20"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -65,7 +63,7 @@ export function AIAssistant() {
             <div className="space-y-4">
               {/* Summary */}
               <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-100">
-                <p className="text-sm text-foreground">
+                <p className="text-sm text-gray-700">
                   <span className="font-semibold">AI-Powered Insights:</span> I've analyzed your business
                   data and found <span className="font-semibold text-indigo-600">{insights.length} insights</span> to
                   help optimize your operations.
@@ -85,14 +83,14 @@ export function AIAssistant() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-medium text-foreground text-sm">
+                          <h4 className="font-medium text-gray-900 text-sm">
                             {insight.title}
                           </h4>
                           <Badge variant="secondary" className="text-xs ml-2">
                             {insight.confidence}% confident
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-3">
+                        <p className="text-sm text-gray-600 mb-3">
                           {insight.description}
                         </p>
                         <div className="flex items-center justify-between">
@@ -117,7 +115,7 @@ export function AIAssistant() {
               })}
 
               {/* Footer Info */}
-              <div className="text-center text-xs text-muted-foreground pt-2">
+              <div className="text-center text-xs text-gray-500 pt-2">
                 AI insights are updated every 6 hours based on your business data
               </div>
             </div>

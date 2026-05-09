@@ -12,27 +12,7 @@ import {
   Wallet,
   Sparkles,
   BarChart3,
-  Bell,
-  Check,
-  Trash2,
 } from "lucide-react";
-
-
-
-type AINotification = {
-  id: string;
-  businessId?: string;
-  title: string;
-  message: string;
-  category?: string;
-  level?: "info" | "warning" | "critical" | string;
-  priority?: number | "info" | "warning" | "critical" | string;
-  score?: number;
-  read: boolean;
-  actionLabel?: string;
-  actionUrl?: string;
-  createdAt: string;
-};
 
 type AISummary = {
   businessId: string;
@@ -64,15 +44,15 @@ function StatCard({
   subtitle?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:shadow-md">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
       <div className="mb-4 flex items-center justify-between">
-        <div className="text-sm font-medium text-muted-foreground">{title}</div>
-        <div className="rounded-xl bg-muted p-2 text-foreground">{icon}</div>
+        <div className="text-sm font-medium text-slate-500">{title}</div>
+        <div className="rounded-xl bg-slate-100 p-2 text-slate-700">{icon}</div>
       </div>
-      <div className="text-2xl font-bold tracking-tight text-foreground">
+      <div className="text-2xl font-bold tracking-tight text-slate-900">
         {value}
       </div>
-      {subtitle ? <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p> : null}
+      {subtitle ? <p className="mt-2 text-sm text-slate-500">{subtitle}</p> : null}
     </div>
   );
 }
@@ -105,110 +85,6 @@ function RiskBadge({
   );
 }
 
-function getNotificationTone(notification: AINotification) {
-  const level = notification.level || String(notification.priority || "info");
-
-  if (level === "critical" || notification.priority === 5) {
-    return "border-red-200 bg-red-50 text-red-700";
-  }
-
-  if (level === "warning" || notification.priority === 4) {
-    return "border-amber-200 bg-amber-50 text-amber-700";
-  }
-
-  return "border-blue-200 bg-blue-50 text-blue-700";
-}
-
-function normalizeNotifications(response: any): AINotification[] {
-  const items = Array.isArray(response)
-    ? response
-    : Array.isArray(response?.items)
-    ? response.items
-    : Array.isArray(response?.notifications)
-    ? response.notifications
-    : [];
-
-  return items.filter(Boolean).map((item: any) => ({
-    ...item,
-    id: String(item.id || crypto.randomUUID()),
-    title: item.title || "AI Notification",
-    message: item.message || "",
-    read: Boolean(item.read),
-    level: item.level || (typeof item.priority === "string" ? item.priority : "info"),
-    createdAt: item.createdAt || item.created_at || new Date().toISOString(),
-  }));
-}
-
-function NotificationCard({
-  notification,
-  onRead,
-  onDelete,
-}: {
-  notification: AINotification;
-  onRead: (notificationId: string) => void;
-  onDelete: (notificationId: string) => void;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border p-4 ${getNotificationTone(notification)} ${
-        notification.read ? "opacity-70" : ""
-      }`}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-bold">{notification.title}</h3>
-            {!notification.read ? (
-              <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-                New
-              </span>
-            ) : null}
-          </div>
-
-          <p className="mt-1 text-sm leading-6">{notification.message}</p>
-
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs opacity-80">
-            {notification.category ? <span>{notification.category}</span> : null}
-            {notification.score !== undefined ? <span>Score: {notification.score}</span> : null}
-            <span>{formatDate(notification.createdAt)}</span>
-          </div>
-
-          {notification.actionUrl ? (
-            <a
-              href={notification.actionUrl}
-              className="mt-3 inline-flex text-sm font-semibold underline"
-            >
-              {notification.actionLabel || "Voir détails"}
-            </a>
-          ) : null}
-        </div>
-
-        <div className="flex shrink-0 items-center gap-2">
-          {!notification.read ? (
-            <button
-              onClick={() => onRead(notification.id)}
-              className="rounded-xl bg-white/70 p-2 transition hover:bg-white"
-              title="Marquer comme lue"
-              type="button"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-          ) : null}
-
-          <button
-            onClick={() => onDelete(notification.id)}
-            className="rounded-xl bg-white/70 p-2 transition hover:bg-white"
-            title="Supprimer"
-            type="button"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function formatMoney(value: number) {
   return new Intl.NumberFormat("fr-FR", {
     minimumFractionDigits: 0,
@@ -232,25 +108,10 @@ export function AIInsights() {
   const [loading, setLoading] = useState(false);
   const [bootLoading, setBootLoading] = useState(true);
   const [error, setError] = useState("");
-  const [notifications, setNotifications] = useState<AINotification[]>([]);
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
 
   const loadSummary = async (businessId: string) => {
     const summary = await AIService.getSummary(businessId);
     setData(summary);
-  };
-
-  const loadNotifications = async (businessId: string) => {
-    setNotificationsLoading(true);
-
-    try {
-      const response = await AIService.getNotifications(businessId);
-      setNotifications(normalizeNotifications(response));
-    } catch {
-      setNotifications([]);
-    } finally {
-      setNotificationsLoading(false);
-    }
   };
 
   const runAnalysis = async (showLoader = true) => {
@@ -261,10 +122,7 @@ export function AIInsights() {
       if (showLoader) setLoading(true);
 
       await AIService.runAnalysis(currentBusinessId);
-      await Promise.all([
-        loadSummary(currentBusinessId),
-        loadNotifications(currentBusinessId),
-      ]);
+      await loadSummary(currentBusinessId);
     } catch (err: any) {
       setError(err?.message || "Erreur lors de l’analyse AI.");
     } finally {
@@ -282,10 +140,7 @@ export function AIInsights() {
 
       try {
         setError("");
-        await Promise.all([
-          loadSummary(currentBusinessId),
-          loadNotifications(currentBusinessId),
-        ]);
+        await loadSummary(currentBusinessId);
       } catch {
         await runAnalysis(false);
       } finally {
@@ -306,49 +161,12 @@ export function AIInsights() {
     return Object.entries(data.clientSegments);
   }, [data]);
 
-  const safeNotifications = useMemo(
-    () => (Array.isArray(notifications) ? notifications : []),
-    [notifications]
-  );
-
-  const unreadNotificationsCount = useMemo(
-    () => safeNotifications.filter((item) => !item.read).length,
-    [safeNotifications]
-  );
-
-  const markNotificationAsRead = async (notificationId: string) => {
-    if (!currentBusinessId) return;
-
-    await AIService.markNotificationAsRead(currentBusinessId, notificationId);
-    setNotifications((items) =>
-      items.map((item) =>
-        item.id === notificationId ? { ...item, read: true } : item
-      )
-    );
-  };
-
-  const markAllNotificationsAsRead = async () => {
-    if (!currentBusinessId) return;
-
-    await AIService.markAllNotificationsAsRead(currentBusinessId);
-    setNotifications((items) => items.map((item) => ({ ...item, read: true })));
-  };
-
-  const deleteNotification = async (notificationId: string) => {
-    if (!currentBusinessId) return;
-
-    await AIService.deleteNotification(currentBusinessId, notificationId);
-    setNotifications((items) =>
-      items.filter((item) => item.id !== notificationId)
-    );
-  };
-
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-border bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-sm">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-card/10 px-3 py-1 text-xs font-medium text-slate-100">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-slate-100">
               <Brain className="h-4 w-4" />
               AI Business Intelligence
             </div>
@@ -363,7 +181,7 @@ export function AIInsights() {
             </p>
 
             {data ? (
-              <p className="mt-3 text-xs text-muted-foreground">
+              <p className="mt-3 text-xs text-slate-400">
                 Business : <span className="font-semibold text-white">{data.businessName}</span>
                 {" • "}Dernière génération : {formatDate(data.generatedAt)}
               </p>
@@ -373,7 +191,7 @@ export function AIInsights() {
           <button
             onClick={() => runAnalysis(true)}
             disabled={loading || !currentBusinessId}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-card px-5 py-3 font-semibold text-foreground shadow-sm transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             {loading ? "Analyse en cours..." : "Relancer l’analyse"}
@@ -387,83 +205,12 @@ export function AIInsights() {
         </div>
       ) : null}
 
-
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-        <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-blue-50 p-3 text-blue-700">
-              <Bell className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-foreground">
-                AI Notifications
-                {unreadNotificationsCount > 0 ? (
-                  <span className="ml-2 rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white">
-                    {unreadNotificationsCount}
-                  </span>
-                ) : null}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Alertes automatiques générées par l’analyse AI.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => currentBusinessId && loadNotifications(currentBusinessId)}
-              disabled={notificationsLoading || !currentBusinessId}
-              className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
-              type="button"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${notificationsLoading ? "animate-spin" : ""}`}
-              />
-              Refresh
-            </button>
-
-            <button
-              onClick={markAllNotificationsAsRead}
-              disabled={!currentBusinessId || unreadNotificationsCount === 0}
-              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              type="button"
-            >
-              Tout marquer lu
-            </button>
-          </div>
-        </div>
-
-        {notificationsLoading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-24 animate-pulse rounded-2xl bg-muted" />
-            ))}
-          </div>
-        ) : safeNotifications.length > 0 ? (
-          <div className="space-y-3">
-            {safeNotifications.map((notification) => (
-              <NotificationCard
-                key={notification.id}
-                notification={notification}
-                onRead={markNotificationAsRead}
-                onDelete={deleteNotification}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-dashed border-border bg-background p-6 text-sm text-muted-foreground">
-            Aucune notification AI pour le moment. Relance l’analyse pour générer
-            de nouvelles alertes.
-          </div>
-        )}
-      </div>
-
       {bootLoading ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className="h-32 animate-pulse rounded-2xl border border-border bg-muted"
+              className="h-32 animate-pulse rounded-2xl border border-slate-200 bg-slate-100"
             />
           ))}
         </div>
@@ -526,16 +273,16 @@ export function AIInsights() {
           </div>
 
           <div className="grid gap-6 xl:grid-cols-3">
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-sm xl:col-span-2">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2">
               <div className="mb-5 flex items-center gap-3">
                 <div className="rounded-2xl bg-blue-50 p-3 text-blue-700">
                   <Sparkles className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-foreground">
+                  <h2 className="text-lg font-bold text-slate-900">
                     Recommandations AI
                   </h2>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-slate-500">
                     Actions prioritaires proposées automatiquement.
                   </p>
                 </div>
@@ -546,33 +293,33 @@ export function AIInsights() {
                   {recommendationList.map((item, index) => (
                     <div
                       key={`${item}-${index}`}
-                      className="flex items-start gap-3 rounded-2xl border border-border bg-background p-4"
+                      className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"
                     >
                       <div className="mt-0.5 rounded-full bg-slate-900 px-2 py-1 text-xs font-bold text-white">
                         {index + 1}
                       </div>
-                      <p className="text-sm leading-6 text-foreground">{item}</p>
+                      <p className="text-sm leading-6 text-slate-700">{item}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="rounded-2xl border border-dashed border-border bg-background p-6 text-sm text-muted-foreground">
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
                   Aucune recommandation disponible pour le moment.
                 </div>
               )}
             </div>
 
             <div className="space-y-6">
-              <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="mb-5 flex items-center gap-3">
                   <div className="rounded-2xl bg-amber-50 p-3 text-amber-700">
                     <AlertTriangle className="h-5 w-5" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-foreground">
+                    <h2 className="text-lg font-bold text-slate-900">
                       Risk Snapshot
                     </h2>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-slate-500">
                       Résumé instantané des alertes.
                     </p>
                   </div>
@@ -602,16 +349,16 @@ export function AIInsights() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="mb-5 flex items-center gap-3">
                   <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-700">
                     <Target className="h-5 w-5" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-foreground">
+                    <h2 className="text-lg font-bold text-slate-900">
                       Client Segments
                     </h2>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-slate-500">
                       Répartition calculée par l’AI.
                     </p>
                   </div>
@@ -622,9 +369,9 @@ export function AIInsights() {
                     {segmentEntries.map(([segment, count]) => (
                       <div
                         key={segment}
-                        className="flex items-center justify-between rounded-2xl bg-background px-4 py-3"
+                        className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3"
                       >
-                        <span className="text-sm font-medium text-foreground">
+                        <span className="text-sm font-medium text-slate-700">
                           {segment}
                         </span>
                         <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
@@ -634,7 +381,7 @@ export function AIInsights() {
                     ))}
                   </div>
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-border bg-background p-5 text-sm text-muted-foreground">
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-sm text-slate-500">
                     Aucun segment client disponible pour ce business.
                   </div>
                 )}
@@ -643,20 +390,20 @@ export function AIInsights() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-bold text-foreground">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-bold text-slate-900">
                 Financial Overview
               </h2>
 
               <div className="space-y-4">
                 <div>
                   <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Revenue</span>
-                    <span className="font-semibold text-foreground">
+                    <span className="text-slate-600">Revenue</span>
+                    <span className="font-semibold text-slate-900">
                       {formatMoney(data.totalRevenue)} TND
                     </span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-muted">
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-100">
                     <div
                       className="h-full rounded-full bg-emerald-500"
                       style={{
@@ -668,12 +415,12 @@ export function AIInsights() {
 
                 <div>
                   <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Expenses</span>
-                    <span className="font-semibold text-foreground">
+                    <span className="text-slate-600">Expenses</span>
+                    <span className="font-semibold text-slate-900">
                       {formatMoney(data.totalExpenses)} TND
                     </span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-muted">
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-100">
                     <div
                       className="h-full rounded-full bg-red-400"
                       style={{
@@ -691,12 +438,12 @@ export function AIInsights() {
 
                 <div>
                   <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Forecast 30d</span>
-                    <span className="font-semibold text-foreground">
+                    <span className="text-slate-600">Forecast 30d</span>
+                    <span className="font-semibold text-slate-900">
                       {formatMoney(data.forecast30d)} TND
                     </span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-muted">
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-100">
                     <div
                       className={`h-full rounded-full ${
                         data.forecast30d >= 0 ? "bg-blue-500" : "bg-amber-500"
@@ -716,41 +463,41 @@ export function AIInsights() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-bold text-foreground">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-bold text-slate-900">
                 AI Summary
               </h2>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl bg-background p-4">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Business
                   </div>
-                  <div className="mt-2 text-base font-bold text-foreground">
+                  <div className="mt-2 text-base font-bold text-slate-900">
                     {data.businessName}
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-background p-4">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Generated At
                   </div>
-                  <div className="mt-2 text-base font-bold text-foreground">
+                  <div className="mt-2 text-base font-bold text-slate-900">
                     {formatDate(data.generatedAt)}
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-background p-4">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     Cash Delta
                   </div>
-                  <div className="mt-2 text-base font-bold text-foreground">
+                  <div className="mt-2 text-base font-bold text-slate-900">
                     {formatMoney(data.cashIn - data.cashOut)} TND
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-background p-4">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
                     AI Status
                   </div>
                   <div className="mt-2 text-base font-bold text-emerald-600">
@@ -764,12 +511,12 @@ export function AIInsights() {
       ) : null}
 
       {!bootLoading && !data && !error ? (
-        <div className="rounded-3xl border border-dashed border-border bg-card p-10 text-center shadow-sm">
-          <Brain className="mx-auto mb-4 h-10 w-10 text-muted-foreground" />
-          <h3 className="text-lg font-bold text-foreground">
+        <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
+          <Brain className="mx-auto mb-4 h-10 w-10 text-slate-400" />
+          <h3 className="text-lg font-bold text-slate-900">
             Aucun résultat AI disponible
           </h3>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-slate-500">
             Lance l’analyse pour générer les premiers insights de ce business.
           </p>
         </div>

@@ -25,7 +25,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 const PRESET_QUESTIONS = [
   "Quel était le nom de votre premier animal de compagnie ?",
@@ -61,17 +61,17 @@ function QuestionCard({
   const isReady = !!selectedValue && !!answerValue.trim();
 
   return (
-    <div className="rounded-[24px] border border-border bg-background/70 p-4 sm:p-5">
+    <div className="rounded-[24px] border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
             <HelpCircle className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-sm font-semibold text-slate-900">
               Question {index + 1}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-500">
               Sélectionnez une question puis saisissez votre réponse
             </p>
           </div>
@@ -83,7 +83,7 @@ function QuestionCard({
             Prête
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground">
+          <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-500">
             Incomplète
           </span>
         )}
@@ -91,11 +91,11 @@ function QuestionCard({
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">
+          <Label className="text-sm font-medium text-slate-700">
             Question de sécurité
           </Label>
           <Select value={selectedValue} onValueChange={onQuestionChange}>
-            <SelectTrigger className="h-12 rounded-2xl border-border bg-card shadow-sm focus:ring-2 focus:ring-indigo-200">
+            <SelectTrigger className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:ring-2 focus:ring-indigo-200">
               <SelectValue placeholder="Choisir une question..." />
             </SelectTrigger>
             <SelectContent>
@@ -109,7 +109,7 @@ function QuestionCard({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">
+          <Label className="text-sm font-medium text-slate-700">
             Votre réponse
           </Label>
           <Input
@@ -119,7 +119,7 @@ function QuestionCard({
             onChange={(e) => onAnswerChange(e.target.value)}
             disabled={!selectedValue}
             required
-            className="h-12 rounded-2xl border-border bg-card shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-muted"
+            className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
           />
         </div>
       </div>
@@ -227,17 +227,17 @@ export function SecurityQuestionsSetup({ token, onComplete }: Props) {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-0">
-      <Card className="overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_12px_40px_rgba(15,23,42,0.08)]">
-        <CardHeader className="border-b border-border bg-gradient-to-r from-slate-50 to-background dark:to-background px-6 py-6 sm:px-8">
+      <Card className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.08)]">
+        <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-6 py-6 sm:px-8">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
             <ShieldCheck className="h-6 w-6" />
           </div>
 
-          <CardTitle className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          <CardTitle className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Configurer les questions de sécurité
           </CardTitle>
 
-          <CardDescription className="max-w-2xl text-sm leading-6 text-muted-foreground">
+          <CardDescription className="max-w-2xl text-sm leading-6 text-slate-500">
             Choisissez 3 questions de sécurité et renseignez vos réponses.
             Elles vous permettront de récupérer l’accès à votre compte si nécessaire.
           </CardDescription>
@@ -251,9 +251,9 @@ export function SecurityQuestionsSetup({ token, onComplete }: Props) {
               </p>
             </div>
 
-            <div className="shrink-0 rounded-2xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+            <div className="shrink-0 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
               Progression :{" "}
-              <span className="font-semibold text-foreground">{progress}/3</span>
+              <span className="font-semibold text-slate-900">{progress}/3</span>
             </div>
           </div>
         </CardHeader>

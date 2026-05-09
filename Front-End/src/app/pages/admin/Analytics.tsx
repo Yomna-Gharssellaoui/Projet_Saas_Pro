@@ -219,7 +219,7 @@ export function Analytics() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[320px] items-center justify-center text-muted-foreground">
+      <div className="flex min-h-[320px] items-center justify-center text-gray-500">
         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
         Loading analytics...
       </div>
@@ -230,15 +230,15 @@ export function Analytics() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Platform Analytics</h1>
-          <p className="mt-2 text-muted-foreground">
+          <h1 className="text-3xl font-bold text-gray-900">Platform Analytics</h1>
+          <p className="mt-2 text-gray-600">
             Comprehensive usage analytics and insights
           </p>
         </div>
 
         <button
           onClick={loadAnalytics}
-          className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-background"
+          className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
         >
           Refresh
         </button>
@@ -247,14 +247,14 @@ export function Analytics() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total Usage Time
             </CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <Clock className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{totalUsageTime} min</div>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-gray-900">{totalUsageTime} min</div>
+            <p className="mt-1 text-xs text-gray-500">
               Avg: {avgUsageTime} min/owner
             </p>
           </CardContent>
@@ -262,16 +262,16 @@ export function Analytics() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total API Calls
             </CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-bold text-gray-900">
               {totalApiCalls.toLocaleString()}
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-gray-500">
               Platform-wide requests
             </p>
           </CardContent>
@@ -279,14 +279,14 @@ export function Analytics() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Active Businesses
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{activeUsers}</div>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-gray-900">{activeUsers}</div>
+            <p className="mt-1 text-xs text-gray-500">
               With linked owners/businesses
             </p>
           </CardContent>
@@ -294,14 +294,14 @@ export function Analytics() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total Owners
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{owners.length}</div>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-gray-900">{owners.length}</div>
+            <p className="mt-1 text-xs text-gray-500">
               Platform users
             </p>
           </CardContent>

@@ -29,9 +29,6 @@ export class InvoiceEntity {
   @Column() currency!: string;
   @Column({ type: "text", nullable: true }) notes?: string;
 
-  @Column({ type: "double precision", default: 0 }) risk_score!: number;
-  @Column({ type: "integer", default: 0 }) anomaly_flag!: number;
-
   @OneToMany(() => InvoiceItemEntity, (it) => it.invoice, { cascade: true, eager: true })
   items!: InvoiceItemEntity[];
 }

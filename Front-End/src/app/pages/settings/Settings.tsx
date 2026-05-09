@@ -31,10 +31,13 @@ import {
   Mail,
   BadgeCheck,
   Building2,
+  ShieldCheck,
 } from "lucide-react";
+import { FaceIdModal } from "@/shared/components/FaceIdModal";
+import { api, apiDelete } from "@/shared/lib/apiClient";
 
 const API_BASE =
-  (import.meta as any).env?.VITE_API_URL || "http://localhost:3001/api";
+  (import.meta as any).env?.VITE_API_URL || "http://localhost:3000/api";
 
 function authHeaders() {
   const token = localStorage.getItem("access_token") ?? "";
@@ -89,8 +92,8 @@ function fieldClass(hasError?: boolean) {
   return `h-11 rounded-2xl border ${
     hasError
       ? "border-red-300 focus-visible:ring-red-200"
-      : "border-border focus-visible:ring-indigo-200"
-  } bg-card`;
+      : "border-slate-200 focus-visible:ring-indigo-200"
+  } bg-white`;
 }
 
 // ─────────────────────────────────────────────────────────
@@ -112,7 +115,7 @@ function PasswordRules({ password }: { password: string }) {
           className={`flex items-center gap-2 rounded-2xl border px-3 py-2 text-xs ${
             r.ok
               ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : "border-border bg-background text-muted-foreground"
+              : "border-slate-200 bg-slate-50 text-slate-500"
           }`}
         >
           {r.ok ? (
@@ -141,7 +144,7 @@ const PRESET_QUESTIONS = [
   "What was your childhood nickname?",
 ];
 
-type Tab = "profile" | "password" | "security" | "account";
+type Tab = "profile" | "password" | "security" | "biometric" | "account";
 
 // ─────────────────────────────────────────────────────────
 // MAIN SETTINGS PAGE
@@ -175,6 +178,12 @@ export function Settings() {
       description: "Recovery and verification setup",
     },
     {
+      id: "biometric",
+      label: "Biometric",
+      icon: <ShieldCheck className="h-4 w-4" />,
+      description: "Face ID & biometric authentication",
+    },
+    {
       id: "account",
       label: "Account Status",
       icon: <Info className="h-4 w-4" />,
@@ -185,14 +194,14 @@ export function Settings() {
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-6 md:px-6 lg:px-8">
       {/* HERO */}
-      <section className="overflow-hidden rounded-[32px] border border-border bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white shadow-sm">
+      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white shadow-sm">
         <div className="relative p-6 md:p-8 xl:p-10">
-          <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-card/5 blur-3xl" />
+          <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
           <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-indigo-500/10 blur-3xl" />
 
           <div className="relative flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
             <div className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-card/5 px-3 py-1.5 text-xs font-medium text-white/80">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80">
                 <Sparkles className="h-3.5 w-3.5" />
                 Personal account workspace
               </div>
@@ -209,23 +218,23 @@ export function Settings() {
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-card/5 px-4 py-2 text-sm text-white/85">
+                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/85">
                   <BadgeCheck className="h-4 w-4" />
                   {user?.name || "User"}
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-card/5 px-4 py-2 text-sm text-white/85">
+                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/85">
                   <Mail className="h-4 w-4" />
                   {user?.email || "No email"}
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-card/5 px-4 py-2 text-sm text-white/85">
+                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/85">
                   <Building2 className="h-4 w-4" />
                   {formatRole(user?.role)}
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 rounded-[28px] border border-white/10 bg-card/5 p-4 backdrop-blur-sm">
-              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-card/10 text-xl font-bold text-white">
+            <div className="flex items-center gap-4 rounded-[28px] border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 text-xl font-bold text-white">
                 {getInitials(user?.name)}
               </div>
               <div className="min-w-0">
@@ -245,7 +254,7 @@ export function Settings() {
       </section>
 
       {/* TABS */}
-      <section className="rounded-[28px] border border-border bg-card p-3 shadow-sm">
+      <section className="rounded-[28px] border border-slate-200 bg-white p-3 shadow-sm">
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {tabs.map((t) => {
             const active = tab === t.id;
@@ -257,7 +266,7 @@ export function Settings() {
                 className={`group rounded-[24px] border p-4 text-left transition-all ${
                   active
                     ? "border-indigo-200 bg-indigo-50 shadow-sm"
-                    : "border-border bg-card hover:bg-background"
+                    : "border-slate-200 bg-white hover:bg-slate-50"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -265,7 +274,7 @@ export function Settings() {
                     className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
                       active
                         ? "bg-indigo-600 text-white"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-slate-100 text-slate-600"
                     }`}
                   >
                     {t.icon}
@@ -275,7 +284,7 @@ export function Settings() {
                     className={`h-4 w-4 transition-transform ${
                       active
                         ? "text-indigo-500"
-                        : "text-muted-foreground group-hover:translate-x-0.5"
+                        : "text-slate-400 group-hover:translate-x-0.5"
                     }`}
                   />
                 </div>
@@ -283,12 +292,12 @@ export function Settings() {
                 <div className="mt-4">
                   <h3
                     className={`font-semibold ${
-                      active ? "text-indigo-700" : "text-foreground"
+                      active ? "text-indigo-700" : "text-slate-900"
                     }`}
                   >
                     {t.label}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{t.description}</p>
+                  <p className="mt-1 text-sm text-slate-500">{t.description}</p>
                 </div>
               </button>
             );
@@ -301,6 +310,7 @@ export function Settings() {
         {tab === "profile" && <ProfileSection />}
         {tab === "password" && <PasswordSection />}
         {tab === "security" && <SecurityQuestionsSection />}
+        {tab === "biometric" && <BiometricSection user={user} />}
         {tab === "account" && <AccountStatusSection user={user} />}
       </section>
     </div>
@@ -332,9 +342,9 @@ function ProfileSection() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">
             Personal Information
           </CardTitle>
           <CardDescription>
@@ -344,16 +354,16 @@ function ProfileSection() {
 
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-            <div className="flex items-center gap-4 rounded-[24px] border border-border bg-background p-4">
+            <div className="flex items-center gap-4 rounded-[24px] border border-slate-200 bg-slate-50 p-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-indigo-600 to-violet-600 text-xl font-bold text-white shadow-sm">
                 {getInitials(name)}
               </div>
               <div className="min-w-0">
-                <p className="truncate font-semibold text-foreground">{name || "Unnamed user"}</p>
-                <p className="text-sm text-muted-foreground capitalize">
+                <p className="truncate font-semibold text-slate-900">{name || "Unnamed user"}</p>
+                <p className="text-sm text-slate-500 capitalize">
                   {formatRole(user?.role)}
                 </p>
-                <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+                <p className="truncate text-xs text-slate-400">{user?.email}</p>
               </div>
             </div>
 
@@ -375,9 +385,9 @@ function ProfileSection() {
                 id="email"
                 value={email}
                 disabled
-                className="h-11 cursor-not-allowed rounded-2xl border-border bg-muted text-muted-foreground"
+                className="h-11 cursor-not-allowed rounded-2xl border-slate-200 bg-slate-100 text-slate-500"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-500">
                 Email cannot be changed. Contact an admin if needed.
               </p>
             </div>
@@ -396,9 +406,9 @@ function ProfileSection() {
         </CardContent>
       </Card>
 
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">Profile Overview</CardTitle>
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">Profile Overview</CardTitle>
           <CardDescription>
             Vue rapide sur ton identité et ton rôle dans la plateforme.
           </CardDescription>
@@ -456,9 +466,9 @@ function PasswordSection() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">
             Change Password
           </CardTitle>
           <CardDescription>
@@ -525,30 +535,30 @@ function PasswordSection() {
         </CardContent>
       </Card>
 
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">Security Tips</CardTitle>
-         <CardDescription>
-  A few simple rules to keep your password strong and secure.
-</CardDescription>
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">Security Tips</CardTitle>
+          <CardDescription>
+            Quelques règles simples pour un mot de passe plus fort.
+          </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-3 p-6">
           <TipBox
-  icon={<KeyRound className="h-4 w-4" />}
-  title="Use a unique password"
-  text="Never reuse the same password across multiple accounts."
-/>
-<TipBox
-  icon={<Shield className="h-4 w-4" />}
-  title="Mix characters"
-  text="A strong password includes uppercase, lowercase, numbers, and is long enough."
-/>
-<TipBox
-  icon={<AlertTriangle className="h-4 w-4" />}
-  title="Avoid weak patterns"
-  text="Avoid using 123456, azerty, your date of birth, or your name."
-/>
+            icon={<KeyRound className="h-4 w-4" />}
+            title="Use a unique password"
+            text="Ma تستعملش نفس mot de passe dans plusieurs comptes."
+          />
+          <TipBox
+            icon={<Shield className="h-4 w-4" />}
+            title="Mix characters"
+            text="A7سن mot de passe فيه majuscule, minuscule, chiffres w longueur correcte."
+          />
+          <TipBox
+            icon={<AlertTriangle className="h-4 w-4" />}
+            title="Avoid weak patterns"
+            text="B3id 3la 123456, azerty, date de naissance ou prénom."
+          />
         </CardContent>
       </Card>
     </div>
@@ -608,8 +618,8 @@ function SecurityQuestionsSection() {
 
   if (checking) {
     return (
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardContent className="py-12 text-center text-sm text-muted-foreground">
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardContent className="py-12 text-center text-sm text-slate-500">
           Loading...
         </CardContent>
       </Card>
@@ -618,9 +628,9 @@ function SecurityQuestionsSection() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">
             Security Questions
           </CardTitle>
           <CardDescription>
@@ -642,10 +652,10 @@ function SecurityQuestionsSection() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="rounded-[24px] border border-border bg-background/70 p-4"
+                className="rounded-[24px] border border-slate-200 bg-slate-50/70 p-4"
               >
                 <div className="mb-3">
-                  <Label className="text-sm font-semibold text-foreground">
+                  <Label className="text-sm font-semibold text-slate-900">
                     Question {i + 1}
                   </Label>
                 </div>
@@ -659,7 +669,7 @@ function SecurityQuestionsSection() {
                       setSelected(arr);
                     }}
                   >
-                    <SelectTrigger className="h-11 rounded-2xl border-border bg-card">
+                    <SelectTrigger className="h-11 rounded-2xl border-slate-200 bg-white">
                       <SelectValue placeholder="Select a question..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -682,7 +692,7 @@ function SecurityQuestionsSection() {
                     }}
                     disabled={!selected[i]}
                     required
-                    className="h-11 rounded-2xl border-border bg-card"
+                    className="h-11 rounded-2xl border-slate-200 bg-white"
                   />
                 </div>
               </div>
@@ -706,9 +716,9 @@ function SecurityQuestionsSection() {
         </CardContent>
       </Card>
 
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">Recovery Notes</CardTitle>
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">Recovery Notes</CardTitle>
           <CardDescription>
             Best practices pour garder des questions utiles et sûres.
           </CardDescription>
@@ -770,9 +780,9 @@ function AccountStatusSection({ user }: { user: any }) {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">Account Status</CardTitle>
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">Account Status</CardTitle>
           <CardDescription>
             Read-only overview of your account metadata.
           </CardDescription>
@@ -782,9 +792,9 @@ function AccountStatusSection({ user }: { user: any }) {
           {statusItems.map((item) => (
             <div
               key={item.label}
-              className="flex flex-col gap-2 rounded-[22px] border border-border bg-background/70 p-4 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2 rounded-[22px] border border-slate-200 bg-slate-50/70 p-4 sm:flex-row sm:items-center sm:justify-between"
             >
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="text-sm font-medium text-slate-500">
                 {item.label}
               </span>
 
@@ -796,7 +806,7 @@ function AccountStatusSection({ user }: { user: any }) {
                     ? "text-emerald-600"
                     : item.highlight === "warning"
                     ? "text-amber-600"
-                    : "text-foreground"
+                    : "text-slate-900"
                 }`}
               >
                 {item.highlight === "success" && (
@@ -812,9 +822,9 @@ function AccountStatusSection({ user }: { user: any }) {
         </CardContent>
       </Card>
 
-      <Card className="rounded-[30px] border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-5">
-          <CardTitle className="text-xl text-foreground">Account Summary</CardTitle>
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">Account Summary</CardTitle>
           <CardDescription>
             Petit résumé visuel de ton état actuel.
           </CardDescription>
@@ -857,10 +867,10 @@ function InfoRow({
   mono?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-[22px] border border-border bg-background/70 p-4 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-sm font-medium text-muted-foreground">{label}</span>
+    <div className="flex flex-col gap-2 rounded-[22px] border border-slate-200 bg-slate-50/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-sm font-medium text-slate-500">{label}</span>
       <span
-        className={`max-w-full break-all text-sm text-foreground sm:max-w-[60%] sm:text-right ${
+        className={`max-w-full break-all text-sm text-slate-900 sm:max-w-[60%] sm:text-right ${
           mono ? "font-mono text-xs" : "font-medium"
         }`}
       >
@@ -882,15 +892,15 @@ function TipBox({
   mono?: boolean;
 }) {
   return (
-    <div className="rounded-[22px] border border-border bg-background/70 p-4">
+    <div className="rounded-[22px] border border-slate-200 bg-slate-50/70 p-4">
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-card text-foreground shadow-sm">
+        <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-slate-700 shadow-sm">
           {icon}
         </div>
         <div className="min-w-0">
-          <p className="font-medium text-foreground">{title}</p>
+          <p className="font-medium text-slate-900">{title}</p>
           <p
-            className={`mt-1 text-sm text-muted-foreground ${
+            className={`mt-1 text-sm text-slate-500 ${
               mono ? "break-all font-mono text-xs" : ""
             }`}
           >
@@ -898,6 +908,214 @@ function TipBox({
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+// SECTION 5: Biometric Security (Face ID)
+// ─────────────────────────────────────────────────────────
+function BiometricSection({ user }: { user: any }) {
+  const [faceIdConfigured, setFaceIdConfigured] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [faceModalOpen, setFaceModalOpen] = useState(false);
+
+  // Check if user has face descriptor on mount
+  useEffect(() => {
+    const checkFaceId = async () => {
+      try {
+        setLoading(true);
+        const response = await api<any>("/auth/me", { method: "GET" });
+        setFaceIdConfigured(!!response.faceDescriptor);
+      } catch (err) {
+        console.error("Error checking Face ID:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkFaceId();
+  }, []);
+
+  const handleRegisterFace = async () => {
+    setFaceModalOpen(true);
+  };
+
+  const handleRemoveFace = async () => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer votre Face ID?")) {
+      return;
+    }
+
+    try {
+      await apiDelete("/auth/remove-face");
+      setFaceIdConfigured(false);
+      toast.success("✅ Face ID supprimé avec succès");
+    } catch (err: any) {
+      console.error("Error removing Face ID:", err);
+      toast.error(err.response?.data?.message || "Erreur lors de la suppression");
+    }
+  };
+
+  const handleFaceSuccess = () => {
+    setFaceIdConfigured(true);
+  };
+
+  return (
+    <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-xl text-slate-900">
+            🔐 Authentification Biométrique
+          </CardTitle>
+          <CardDescription>
+            Connectez-vous rapidement avec votre visage (Face ID)
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="p-6">
+          <div className="space-y-6">
+            {/* STATUS CARD */}
+            <div
+              className={`rounded-[20px] border-2 p-4 ${
+                faceIdConfigured
+                  ? "border-green-200 bg-green-50"
+                  : "border-slate-200 bg-slate-50"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {faceIdConfigured ? (
+                  <>
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <div>
+                      <p className="font-semibold text-green-900">
+                        ✅ Face ID Activé
+                      </p>
+                      <p className="text-sm text-green-700">
+                        Vous pouvez maintenant vous connecter avec votre visage
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="h-5 w-5 text-slate-500" />
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        ❌ Non configuré
+                      </p>
+                      <p className="text-sm text-slate-600">
+                        Configurez Face ID pour une connexion rapide
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* FEATURES */}
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-slate-700">Avantages:</p>
+              <ul className="space-y-2 text-sm text-slate-600">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                  <span>Connexion sécurisée et rapide</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                  <span>Pas de mot de passe à taper</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                  <span>Données biométriques chiffrées localement</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* ACTIONS */}
+            <div className="flex gap-3 pt-3">
+              {faceIdConfigured ? (
+                <>
+                  <Button
+                    onClick={handleRemoveFace}
+                    variant="destructive"
+                    className="h-11 flex-1 rounded-2xl"
+                  >
+                    Supprimer Face ID
+                  </Button>
+                  <Button
+                    onClick={handleRegisterFace}
+                    className="h-11 flex-1 rounded-2xl bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Mettre à jour
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={handleRegisterFace}
+                  disabled={loading}
+                  className="h-11 w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700"
+                >
+                  {loading ? "Vérification..." : "🔐 Configurer Face ID"}
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* INFO CARD */}
+      <Card className="rounded-[30px] border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-5">
+          <CardTitle className="text-lg text-slate-900">Comment ça marche?</CardTitle>
+        </CardHeader>
+
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div>
+              <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600">
+                1
+              </div>
+              <p className="mt-2 text-sm font-semibold text-slate-900">
+                Scannez votre visage
+              </p>
+              <p className="mt-1 text-sm text-slate-600">
+                Positionnez votre visage dans le cadre oval
+              </p>
+            </div>
+
+            <div>
+              <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600">
+                2
+              </div>
+              <p className="mt-2 text-sm font-semibold text-slate-900">
+                Enregistrement sécurisé
+              </p>
+              <p className="mt-1 text-sm text-slate-600">
+                Votre signature faciale est stockée localement
+              </p>
+            </div>
+
+            <div>
+              <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600">
+                3
+              </div>
+              <p className="mt-2 text-sm font-semibold text-slate-900">
+                Connexion future
+              </p>
+              <p className="mt-1 text-sm text-slate-600">
+                Cliquez "Face ID" sur la page de connexion
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* FACE ID MODAL */}
+      <FaceIdModal
+        open={faceModalOpen}
+        mode="register"
+        onClose={() => setFaceModalOpen(false)}
+        onSuccess={handleFaceSuccess}
+      />
     </div>
   );
 }

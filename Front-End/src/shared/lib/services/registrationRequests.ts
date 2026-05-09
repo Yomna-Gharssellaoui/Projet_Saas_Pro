@@ -11,7 +11,6 @@ export type PaymentStatus =
 
 export type PaymentMethod =
   | "mock_online"
-  | "paypal"
   | "cash"
   | "bank_transfer"
   | "manual";
@@ -47,21 +46,6 @@ export type RegistrationRequest = {
   createdAt: string;
   updatedAt?: string;
 };
-
-export type PublicPaymentRequest = Pick<
-  RegistrationRequest,
-  | "id"
-  | "ownerName"
-  | "ownerEmail"
-  | "companyName"
-  | "selectedPlan"
-  | "paymentStatus"
-  | "paymentMethod"
-  | "paymentProvider"
-  | "paymentReference"
-  | "paymentUrl"
-  | "status"
->;
 
 export type CreateRegistrationRequestPayload = {
   ownerName: string;
@@ -136,9 +120,6 @@ export const RegistrationRequestsApi = {
   findOne: (id: string) =>
     api<RegistrationRequest>(`/registration-requests/${id}`),
 
-  getPublicPaymentRequest: (id: string) =>
-    api<PublicPaymentRequest>(`/registration-requests/${id}/public-payment`),
-
   // =====================================================
   // Admin - approve
   // garde ton ancienne fonction mais supporte dto optionnel
@@ -169,11 +150,6 @@ export const RegistrationRequestsApi = {
       method: "POST",
     }),
 
-  createPayPalPayment: (id: string) =>
-    api<RegistrationRequest>(`/registration-requests/${id}/paypal-payment/create`, {
-      method: "POST",
-    }),
-
   // =====================================================
   // Public/Admin - mock payment success
   // =====================================================
@@ -188,18 +164,6 @@ export const RegistrationRequestsApi = {
   mockPaymentFail: (id: string) =>
     api<RegistrationRequest>(`/registration-requests/${id}/mock-payment/fail`, {
       method: "POST",
-    }),
-
-  confirmOnlinePayment: (
-    id: string,
-    payload: {
-      provider?: string;
-      orderId: string;
-    }
-  ) =>
-    api<RegistrationRequest>(`/registration-requests/${id}/online-payment/confirm`, {
-      method: "POST",
-      body: JSON.stringify(payload),
     }),
 
   // =====================================================

@@ -285,8 +285,8 @@ export function CreateExpense() {
   if (!currentBusiness) {
     return (
       <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-foreground">Créer une dépense</h1>
-        <p className="text-sm text-muted-foreground">Aucune entreprise sélectionnée.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Créer une dépense</h1>
+        <p className="text-sm text-slate-500">Aucune entreprise sélectionnée.</p>
         <Button onClick={() => navigate("/dashboard/businesses/new")}>
           <Building2 className="mr-2 h-4 w-4" />
           Créer une entreprise
@@ -296,14 +296,14 @@ export function CreateExpense() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="mb-8 flex flex-col gap-4">
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-3 text-sm text-slate-500">
             <button
               type="button"
               onClick={() => navigate("/dashboard/expenses")}
-              className="inline-flex items-center gap-2 rounded-lg px-2 py-1 transition hover:bg-card hover:text-foreground"
+              className="inline-flex items-center gap-2 rounded-lg px-2 py-1 transition hover:bg-white hover:text-slate-700"
             >
               <ArrowLeft className="h-4 w-4" />
               Retour
@@ -311,15 +311,15 @@ export function CreateExpense() {
             <span>/</span>
             <span>Expenses</span>
             <span>/</span>
-            <span className="text-foreground">Créer</span>
+            <span className="text-slate-700">Créer</span>
           </div>
 
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-4xl font-bold tracking-tight text-foreground">
+              <h1 className="text-4xl font-bold tracking-tight text-slate-900">
                 Créer une dépense
               </h1>
-              <p className="mt-2 text-base text-muted-foreground">
+              <p className="mt-2 text-base text-slate-500">
                 Enregistrez une nouvelle dépense pour{" "}
                 <span className="font-semibold text-indigo-600">
                   {currentBusiness.name}
@@ -336,9 +336,9 @@ export function CreateExpense() {
         <form onSubmit={handleSubmit} noValidate>
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
             <div className="space-y-6 xl:col-span-8">
-              <Card className="rounded-2xl border border-border bg-card shadow-sm">
+              <Card className="rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-xl text-foreground">
+                  <CardTitle className="text-xl text-slate-900">
                     Informations principales
                   </CardTitle>
                 </CardHeader>
@@ -346,7 +346,7 @@ export function CreateExpense() {
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="category" className="text-sm font-medium text-foreground">
+                      <Label className="text-sm font-medium text-slate-700">
                         Catégorie *
                       </Label>
                       <Select
@@ -357,8 +357,7 @@ export function CreateExpense() {
                         }}
                       >
                         <SelectTrigger
-                          id="category"
-                          className={`h-11 rounded-xl border-border bg-card ${
+                          className={`h-11 rounded-xl border-slate-200 bg-white ${
                             errors.category ? inputErrorClass : ""
                           }`}
                         >
@@ -380,11 +379,10 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="amount" className="text-sm font-medium text-foreground">
+                      <Label className="text-sm font-medium text-slate-700">
                         Montant ({currency}) *
                       </Label>
                       <Input
-                        id="amount"
                         type="number"
                         min="0"
                         step="0.01"
@@ -395,7 +393,7 @@ export function CreateExpense() {
                           clearError("amount");
                         }}
                         onBlur={() => setFieldError("amount", validateAmount())}
-                        className={`h-11 rounded-xl border-border bg-card ${
+                        className={`h-11 rounded-xl border-slate-200 bg-white ${
                           errors.amount ? inputErrorClass : ""
                         }`}
                       />
@@ -407,11 +405,10 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="vendor" className="text-sm font-medium text-foreground">
+                      <Label className="text-sm font-medium text-slate-700">
                         Fournisseur
                       </Label>
                       <Input
-                        id="vendor"
                         placeholder="Ex: Office Depot"
                         value={vendor}
                         onChange={(e) => {
@@ -419,7 +416,7 @@ export function CreateExpense() {
                           clearError("vendor");
                         }}
                         onBlur={() => setFieldError("vendor", validateVendor())}
-                        className={`h-11 rounded-xl border-border bg-card ${
+                        className={`h-11 rounded-xl border-slate-200 bg-white ${
                           errors.vendor ? inputErrorClass : ""
                         }`}
                       />
@@ -431,7 +428,7 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="paymentMethod" className="text-sm font-medium text-foreground">
+                      <Label className="text-sm font-medium text-slate-700">
                         Méthode de paiement *
                       </Label>
                       <Select
@@ -442,8 +439,7 @@ export function CreateExpense() {
                         }}
                       >
                         <SelectTrigger
-                          id="paymentMethod"
-                          className={`h-11 rounded-xl border-border bg-card ${
+                          className={`h-11 rounded-xl border-slate-200 bg-white ${
                             errors.paymentMethod ? inputErrorClass : ""
                           }`}
                         >
@@ -465,13 +461,12 @@ export function CreateExpense() {
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="date" className="text-sm font-medium text-foreground">
+                      <Label className="text-sm font-medium text-slate-700">
                         Date *
                       </Label>
                       <div className="relative">
-                        <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                         <Input
-                          id="date"
                           type="date"
                           value={date}
                           onChange={(e) => {
@@ -479,7 +474,7 @@ export function CreateExpense() {
                             clearError("date");
                           }}
                           onBlur={() => setFieldError("date", validateDate())}
-                          className={`h-11 rounded-xl border-border bg-card pl-10 ${
+                          className={`h-11 rounded-xl border-slate-200 bg-white pl-10 ${
                             errors.date ? inputErrorClass : ""
                           }`}
                         />
@@ -494,20 +489,19 @@ export function CreateExpense() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-2xl border border-border bg-card shadow-sm">
+              <Card className="rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-xl text-foreground">
+                  <CardTitle className="text-xl text-slate-900">
                     Description
                   </CardTitle>
                 </CardHeader>
 
                 <CardContent>
                   <div className="space-y-2">
-                    <Label htmlFor="description" className="text-sm font-medium text-foreground">
+                    <Label className="text-sm font-medium text-slate-700">
                       Détails de la dépense *
                     </Label>
                     <Textarea
-                      id="description"
                       placeholder="Ex: Achat de fournitures de bureau pour l’équipe finance..."
                       value={description}
                       onChange={(e) => {
@@ -518,14 +512,14 @@ export function CreateExpense() {
                         setFieldError("description", validateDescription())
                       }
                       rows={6}
-                      className={`rounded-2xl border-border bg-card ${
+                      className={`rounded-2xl border-slate-200 bg-white ${
                         errors.description ? inputErrorClass : ""
                       }`}
                     />
                     <div className="flex items-center justify-between text-xs">
                       <span
                         className={
-                          errors.description ? "text-red-600 font-medium" : "text-muted-foreground"
+                          errors.description ? "text-red-600 font-medium" : "text-slate-400"
                         }
                       >
                         {errors.description
@@ -536,7 +530,7 @@ export function CreateExpense() {
                         className={
                           description.trim().length > MAX_DESCRIPTION_LENGTH
                             ? "font-medium text-red-600"
-                            : "text-muted-foreground"
+                            : "text-slate-400"
                         }
                       >
                         {description.trim().length}/{MAX_DESCRIPTION_LENGTH}
@@ -546,9 +540,9 @@ export function CreateExpense() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-2xl border border-border bg-card shadow-sm">
+              <Card className="rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-xl text-foreground">
+                  <CardTitle className="text-xl text-slate-900">
                     Justificatif
                   </CardTitle>
                 </CardHeader>
@@ -559,16 +553,16 @@ export function CreateExpense() {
                       className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-10 text-center transition ${
                         errors.receipt
                           ? "border-red-400 bg-red-50"
-                          : "border-border bg-background hover:border-indigo-300 hover:bg-indigo-50/40"
+                          : "border-slate-300 bg-slate-50 hover:border-indigo-300 hover:bg-indigo-50/40"
                       }`}
                     >
-                      <div className="rounded-2xl bg-card p-3 shadow-sm">
-                        <Upload className="h-5 w-5 text-muted-foreground" />
+                      <div className="rounded-2xl bg-white p-3 shadow-sm">
+                        <Upload className="h-5 w-5 text-slate-600" />
                       </div>
-                      <p className="mt-4 text-sm font-medium text-foreground">
+                      <p className="mt-4 text-sm font-medium text-slate-800">
                         Glissez votre fichier ici ou cliquez pour importer
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 text-xs text-slate-500">
                         PNG, JPG ou PDF — max {MAX_FILE_SIZE_MB} MB
                       </p>
                       <input
@@ -579,10 +573,10 @@ export function CreateExpense() {
                       />
                     </label>
                   ) : (
-                    <div className="rounded-2xl border border-border bg-background p-4">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3">
-                          <div className="rounded-xl bg-card p-3 shadow-sm">
+                          <div className="rounded-xl bg-white p-3 shadow-sm">
                             {receiptPreview.isImage ? (
                               <ImageIcon className="h-5 w-5 text-indigo-600" />
                             ) : (
@@ -591,10 +585,10 @@ export function CreateExpense() {
                           </div>
 
                           <div>
-                            <p className="font-medium text-foreground">
+                            <p className="font-medium text-slate-900">
                               {receiptPreview.name}
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-slate-500">
                               {receiptPreview.sizeKb} KB
                             </p>
                           </div>
@@ -605,17 +599,16 @@ export function CreateExpense() {
                           variant="ghost"
                           size="icon"
                           onClick={removeReceipt}
-                          aria-label="Remove receipt"
                         >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
 
                       {receiptPreview.isImage && receiptPreviewUrl && (
-                        <div className="mt-4 overflow-hidden rounded-xl border bg-card">
+                        <div className="mt-4 overflow-hidden rounded-xl border bg-white">
                           <img
                             src={receiptPreviewUrl}
-                            alt="Receipt preview"
+                            alt="Preview"
                             className="max-h-80 w-full object-contain"
                           />
                         </div>
@@ -633,9 +626,9 @@ export function CreateExpense() {
             </div>
 
             <div className="space-y-6 xl:col-span-4">
-              <Card className="sticky top-6 rounded-2xl border border-border bg-card shadow-sm">
+              <Card className="sticky top-6 rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-xl text-foreground">
+                  <CardTitle className="text-xl text-slate-900">
                     Résumé de soumission
                   </CardTitle>
                 </CardHeader>
@@ -649,61 +642,61 @@ export function CreateExpense() {
                     <div className="mt-3 text-4xl font-bold tracking-tight">
                       {formatMoney(Number.isFinite(numericAmount) ? numericAmount : 0, currency)}
                     </div>
-                    <div className="mt-2 inline-flex rounded-full bg-card/10 px-3 py-1 text-xs text-slate-200">
+                    <div className="mt-2 inline-flex rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">
                       En attente d’approbation
                     </div>
                   </div>
 
-                  <div className="space-y-3 rounded-2xl border border-border p-4">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
                       <BriefcaseBusiness className="h-4 w-4" />
                       Détails
                     </div>
 
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Entreprise</span>
-                        <span className="font-medium text-foreground">
+                        <span className="text-slate-500">Entreprise</span>
+                        <span className="font-medium text-slate-900">
                           {currentBusiness.name}
                         </span>
                       </div>
 
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Catégorie</span>
-                        <span className="font-medium text-foreground">
+                        <span className="text-slate-500">Catégorie</span>
+                        <span className="font-medium text-slate-900">
                           {category || "-"}
                         </span>
                       </div>
 
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Paiement</span>
-                        <span className="font-medium text-foreground">
+                        <span className="text-slate-500">Paiement</span>
+                        <span className="font-medium text-slate-900">
                           {paymentMethod || "-"}
                         </span>
                       </div>
 
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Date</span>
-                        <span className="font-medium text-foreground">
+                        <span className="text-slate-500">Date</span>
+                        <span className="font-medium text-slate-900">
                           {date || "-"}
                         </span>
                       </div>
 
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Soumis par</span>
-                        <span className="font-medium text-foreground">
+                        <span className="text-slate-500">Soumis par</span>
+                        <span className="font-medium text-slate-900">
                           {submittedByLabel}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-3 rounded-2xl border border-border p-4">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
                       <CreditCard className="h-4 w-4" />
                       Conseils
                     </div>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
+                    <ul className="space-y-2 text-sm text-slate-600">
                       <li>• Vérifie le montant exact</li>
                       <li>• Ajoute une description claire</li>
                       <li>• Joins un justificatif si possible</li>
@@ -728,7 +721,7 @@ export function CreateExpense() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-11 w-full rounded-xl border-border"
+                      className="h-11 w-full rounded-xl border-slate-200"
                       onClick={() => navigate("/dashboard/expenses")}
                       disabled={loading}
                     >
@@ -736,7 +729,7 @@ export function CreateExpense() {
                     </Button>
                   </div>
 
-                  <div className="rounded-2xl bg-background p-4 text-sm text-muted-foreground">
+                  <div className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">
                     Cette dépense sera associée à l’entreprise sélectionnée et pourra être approuvée ou rejetée selon les permissions.
                   </div>
                 </CardContent>

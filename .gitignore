@@ -1,17 +1,66 @@
-# Front-End
-Front-End/node_modules/
-Front-End/dist/
+# Environment Variables
+.env
+.env.local
+.env.*.local
+Back-End\.env
+# Build Artifacts & Dependencies
+dist/
+build/
+*.js.map
+*.ts.map
+*.css.map
+
+# Node Modules (if not already ignored)
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS Files
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary Files
+temp/
+tmp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# AI Service Pro Files (if needed)
+AI-Service-Pro-v4-fixed/output/
+AI-Service-Pro-v4-fixed/data/
+
+# Uploads
+uploads/
+
+# Mac
+.AppleDouble
+.LSOverride
+
+# Front-End specific
 Front-End/.vite/
-Front-End/__pycache__/
 Front-End/**/*.tsbuildinfo
 
-# Back-End
-Back-End/node_modules/
-Back-End/dist/
+# Back-End specific
 Back-End/.vite/
-Back-End/__pycache__/
 Back-End/**/*.tsbuildinfo
-Back-End/coverage/
-Back-End/.scannerwork/
-Back-End/coverage/
-Back-End/test-results/
+Back-End/.env
+Back-End/.env

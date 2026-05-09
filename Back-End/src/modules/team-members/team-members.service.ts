@@ -11,8 +11,6 @@ import { randomUUID } from "crypto";
 import { TeamMemberEntity } from "./entities/team-member.entity";
 import { TeamInvitationEntity } from "./entities/team-invitation.entity";
 import { BusinessEntity } from "../businesses/entities/business.entity";
-import { UserEntity } from "../users/entities/user.entity";
-import { In } from "typeorm";
 
 import { CreateTeamMemberDto } from "./dto/create-team-member.dto";
 import { UpdateTeamMemberDto } from "./dto/update-team-member.dto";
@@ -39,9 +37,6 @@ export class TeamMembersService {
 
     @InjectRepository(BusinessEntity)
     private readonly businessRepo: Repository<BusinessEntity>,
-
-    @InjectRepository(UserEntity)
-    private readonly userRepo: Repository<UserEntity>,
 
     private readonly mailService: MailService
   ) {}
@@ -220,6 +215,30 @@ export class TeamMembersService {
     return { deleted: true, id };
   }
 
+  // ── HR Profile ────────────────────────────────────────────────────────────
+  async updateHrProfile(user: JwtUser, id: string, dto: {
+    satisfactionLevel?:    number;
+    lastEvaluation?:       number;
+    numberOfProjects?:     number;
+    averageMonthlyHours?:  number;
+    workAccident?:         number;
+    promotionLast5years?:  number;
+  }) {
+    const m = await this.membersRepo.findOne({ where: { id } });
+    if (!m) throw new NotFoundException("Team member not found");
+
+    await this.assertOwnerOwnsBusiness(user.sub, m.businessId);
+
+    if (dto.satisfactionLevel   !== undefined) m.satisfactionLevel   = dto.satisfactionLevel;
+    if (dto.lastEvaluation      !== undefined) m.lastEvaluation      = dto.lastEvaluation;
+    if (dto.numberOfProjects    !== undefined) m.numberOfProjects    = dto.numberOfProjects;
+    if (dto.averageMonthlyHours !== undefined) m.averageMonthlyHours = dto.averageMonthlyHours;
+    if (dto.workAccident        !== undefined) m.workAccident        = dto.workAccident;
+    if (dto.promotionLast5years !== undefined) m.promotionLast5years = dto.promotionLast5years;
+
+    return this.membersRepo.save(m);
+  }
+
   // =============================
   // READ actions
   // =============================
@@ -228,19 +247,9 @@ export class TeamMembersService {
 
     await this.assertUserHasAccess(user, businessId);
 
-    const members = await this.membersRepo.find({
+    return this.membersRepo.find({
       where: { businessId },
       order: { createdAt: "DESC" as any },
-    });
-
-    if (members.length === 0) return [];
-
-    const emails = members.map(m => m.email);
-    const users = await this.userRepo.find({ where: { email: In(emails) } });
-
-    return members.map(m => {
-      const u = users.find(u => u.email === m.email);
-      return { ...m, userId: u?.id };
     });
   }
 

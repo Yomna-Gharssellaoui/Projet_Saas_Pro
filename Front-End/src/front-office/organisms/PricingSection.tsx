@@ -60,26 +60,21 @@ export function PricingSection() {
   ];
 
   return (
-    <section id="pricing" className="py-20 bg-background">
+    <section id="pricing" className="py-20 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <Badge className="mb-4 rounded-full bg-indigo-100 px-3 py-1 text-indigo-700 hover:bg-indigo-100">Tarifs</Badge>
-          <h2 className="text-3xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
+          <Badge className="mb-4">Tarifs</Badge>
+          <h2 className="text-3xl lg:text-5xl font-bold text-slate-900 mb-4">
             Choisissez votre plan
           </h2>
-          <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
             Des tarifs transparents et adaptés à la taille de votre entreprise
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
-            <div
-              key={index}
-              className="transition-all duration-200 hover:-translate-y-1"
-            >
-              <PricingCard {...plan} />
-            </div>
+            <PricingCard key={index} {...plan} />
           ))}
         </div>
       </div>

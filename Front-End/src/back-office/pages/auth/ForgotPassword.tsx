@@ -12,7 +12,7 @@ import {
 } from "../../../app/components/ui/card";
 import { toast } from "sonner";
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001/api";
+const API_BASE = (import.meta as any).env?.VITE_API_URL || "http://localhost:3000/api";
 
 async function apiPost(path: string, body: object) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -65,8 +65,8 @@ function StepIndicator({ step }: { step: Step }) {
                 i < current
                   ? "bg-indigo-600 border-indigo-600 text-white"
                   : i === current
-                  ? "border-indigo-600 text-indigo-600 bg-card"
-                  : "border-muted text-muted-foreground bg-card"
+                  ? "border-indigo-600 text-indigo-600 bg-white"
+                  : "border-muted text-muted-foreground bg-white"
               }`}
             >
               {i < current ? "✓" : i + 1}
