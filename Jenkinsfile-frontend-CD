@@ -54,9 +54,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     npm install -g vercel
-                    npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                    npx vercel build --token=$VERCEL_TOKEN
-                    npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+                    npx vercel --prod --token=$VERCEL_TOKEN --yes
                 '''
             }
         }
