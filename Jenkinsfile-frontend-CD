@@ -40,19 +40,20 @@ pipeline {
 
         stage('Deploy to Vercel') {
             steps {
-                sh '''
-                    cd Front-End
-                    npm install -g vercel
-                    npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                    npx vercel deploy --prod --token=$VERCEL_TOKEN
-                '''
+                dir('Front-End') {
+                    sh '''
+                        npm install -g vercel
+                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+                        npx vercel deploy --prod --token=$VERCEL_TOKEN
+                    '''
+                }
             }
         }
     }
 
     post {
         success {
-            echo '✅ Frontend deployed successfully!'
+            echo '✅ Frontend deployed to Kubernetes and Vercel!'
         }
         failure {
             echo '❌ Frontend deployment failed.'
