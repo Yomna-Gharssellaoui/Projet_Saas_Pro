@@ -40,27 +40,25 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withKubeConfig([credentialsId: 'KUBECONFIG_FILE']) {
-                    sh """
+                    sh '''
                         echo "Deploying with IMAGE_TAG: ${IMAGE_TAG}"
                         sed -i "s|IMAGE_TAG|${IMAGE_TAG}|g" k8s/frontend-deployment.yaml
                         cat k8s/frontend-deployment.yaml | grep image:
                         kubectl apply -f k8s/frontend-deployment.yaml
                         kubectl apply -f k8s/frontend-service.yaml
                         kubectl rollout status deployment/saas-frontend -n frontend
-                    """
+                    '''
                 }
             }
         }
 
         stage('Deploy to Vercel') {
             steps {
-                dir('Front-End') {
-                    sh '''
-                        npm install -g vercel
-                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                        npx vercel deploy --prod --token=$VERCEL_TOKEN
-                    '''
-                }
+                sh '''
+                    npm install -g vercel
+                    npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+                    npx vercel deploy --prod --token=$VERCEL_TOKEN
+                '''
             }
         }
     }
