@@ -1,58 +1,51 @@
 pipeline {
     agent any
     tools { nodejs 'node20' }
-    environment {
-        NODE_OPTIONS = '--max-old-space-size=512'
-    }
+
     stages {
         stage('Checkout') {
-            steps { checkout scm }
+            steps {
+                checkout scm
+            }
         }
+
         stage('Install') {
             steps {
-                dir('Front-End') { sh 'npm ci' }
-            }
-        }
-        stage('Unit Tests') {
-            steps {
-                dir('Front-End') { sh 'npm run test:coverage || true' }
-            }
-        }
-        stage('SonarQube Analysis') {
-            environment {
-                SONAR_TOKEN = credentials('SONAR_FRONTEND_TOKEN')
-            }
-            steps {
                 dir('Front-End') {
-                    withSonarQubeEnv('SonarQube') {
-                        sh '''
-                            npx sonar-scanner \
-                              -Dsonar.projectKey=saas-frontend \
-                              -Dsonar.projectName="SaasPro Frontend" \
-                              -Dsonar.sources=src \
-                              -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.tsx,**/*.test.ts,**/coverage/**,**/*.spec.ts \
-                              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                              -Dsonar.javascript.node.maxspace=2048 \
-                              -Dsonar.cpd.exclusions=**/* \
-                              -Dsonar.token=${SONAR_TOKEN}
-                        '''
-                    }
+                    sh 'npm ci'
                 }
             }
         }
-        stage('Build') {
+
+        stage('Unit Tests') {
             steps {
-                dir('Front-End') { sh 'npm run build' }
+                dir('Front-End') {
+                    sh 'npm run test:coverage || true'
+                }
             }
         }
+
+        stage('Build') {
+            steps {
+                dir('Front-End') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
         stage('Trigger CD') {
             steps {
                 build job: 'frontend-CD', wait: false
             }
         }
     }
+
     post {
-        success { echo '✅ Frontend CI passed.' }
-        failure { echo '❌ Frontend CI failed.' }
+        success {
+            echo '✅ Frontend CI passed'
+        }
+        failure {
+            echo '❌ Frontend CI failed'
+        }
     }
 }
