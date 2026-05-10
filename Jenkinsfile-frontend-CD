@@ -13,9 +13,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                checkout scm
-            }
+            steps { checkout scm }
         }
 
         stage('Docker Build') {
@@ -57,21 +55,16 @@ pipeline {
                 sh '''
                     npm install -g vercel
                     npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                    npx vercel deploy --prod --token=$VERCEL_TOKEN
+                    cd Front-End && npm install && npm run build
+                    npx vercel deploy --prod --token=$VERCEL_TOKEN --prebuilt
                 '''
             }
         }
     }
 
     post {
-        success {
-            echo 'Frontend deployed to Kubernetes and Vercel successfully.'
-        }
-        failure {
-            echo 'Frontend CD failed. Check logs above.'
-        }
-        always {
-            sh 'docker logout || true'
-        }
+        success { echo 'Frontend deployed to Kubernetes and Vercel successfully.' }
+        failure { echo 'Frontend CD failed. Check logs above.' }
+        always  { sh 'docker logout || true' }
     }
 }
