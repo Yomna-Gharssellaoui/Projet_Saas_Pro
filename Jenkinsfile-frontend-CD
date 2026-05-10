@@ -38,12 +38,13 @@ pipeline {
 
         stage('Deploy to Vercel') {
             steps {
-                sh '''
-                    npm install -g vercel
-                    npx vercel deploy --prod \
-                      --token=$VERCEL_TOKEN \
-                      --cwd=./Front-End
-                '''
+                dir('Front-End') {
+                    sh '''
+                        npm install -g vercel
+                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+                        npx vercel deploy --prod --token=$VERCEL_TOKEN
+                    '''
+                }
             }
         }
     }
