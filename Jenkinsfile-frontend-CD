@@ -5,7 +5,6 @@ pipeline {
     environment {
         IMAGE_NAME = "yomnagharssellaoui/saas-frontend"
         IMAGE_TAG = "latest"
-        VERCEL_TOKEN = credentials('VERCEL_TOKEN')
     }
 
     stages {
@@ -35,23 +34,11 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy to Vercel') {
-            steps {
-                dir('Front-End') {
-                    sh '''
-                        npm install -g vercel
-                        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-                        npx vercel deploy --prod --token=$VERCEL_TOKEN
-                    '''
-                }
-            }
-        }
     }
 
     post {
         success {
-            echo '✅ Frontend deployed to Kubernetes and Vercel!'
+            echo '✅ Frontend deployed to Kubernetes!'
         }
         failure {
             echo '❌ Frontend deployment failed.'
