@@ -15,3 +15,5 @@ Back-End/coverage/
 Back-End/.scannerwork/
 Back-End/coverage/
 Back-End/test-results/
+.vercel
+.env*.local
