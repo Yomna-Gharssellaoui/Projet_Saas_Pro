@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   FileText,
   Loader2,
+  Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 import html2canvas from "html2canvas-pro";
@@ -362,6 +363,15 @@ export function ViewInvoice() {
           <Button variant="outline" size="sm" onClick={handleDownload}>
             <Download className="mr-2 h-4 w-4" />
             Download
+          </Button>
+
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate("/dashboard/invoices/create", { state: { templateInvoice: invoice } })}
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            Duplicate
           </Button>
 
           {canSend && (

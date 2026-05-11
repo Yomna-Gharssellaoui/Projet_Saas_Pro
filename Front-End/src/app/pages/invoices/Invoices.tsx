@@ -17,6 +17,7 @@ import {
   ChevronRight,
   RotateCcw,
   FileDown,
+  Copy,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -853,6 +854,16 @@ export function Invoices() {
                               aria-label={`View invoice ${invoice.invoiceNumber}`}
                             >
                               <Eye className="h-4 w-4" />
+                            </Button>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => navigate('/dashboard/invoices/create', { state: { templateInvoice: invoice } })}
+                              title="Duplicate invoice"
+                              aria-label={`Duplicate invoice ${invoice.invoiceNumber}`}
+                            >
+                              <Copy className="h-4 w-4" />
                             </Button>
 
                             <Button
