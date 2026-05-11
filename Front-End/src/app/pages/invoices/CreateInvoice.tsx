@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
@@ -87,15 +87,17 @@ const getInputClass = (hasError?: boolean) =>
 
 export function CreateInvoice() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const templateInvoice = location.state?.templateInvoice;
   const { currentBusiness } = useBusinessContext();
 
   const [clients, setClients] = useState<Client[]>([]);
   const [clientsLoading, setClientsLoading] = useState(false);
 
-  const [clientId, setClientId] = useState("");
+  const [clientId, setClientId] = useState(templateInvoice?.clientId || "");
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split("T")[0]);
   const [dueDate, setDueDate] = useState(addDays(new Date().toISOString().split("T")[0], 15));
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(templateInvoice?.notes || "");
   const [invoiceNumber, setInvoiceNumber] = useState(makeInvoiceNumber());
   const [submitting, setSubmitting] = useState<"draft" | "sent" | null>(null);
 
@@ -104,15 +106,25 @@ export function CreateInvoice() {
 
   const defaultTaxRate = clampNumber(currentBusiness?.taxRate ?? 0);
 
-  const [lineItems, setLineItems] = useState<LineItem[]>([
-    {
-      id: crypto.randomUUID?.() ?? "1",
-      description: "",
-      quantity: 1,
-      unitPrice: 0,
-      taxRate: defaultTaxRate,
-    },
-  ]);
+  const [lineItems, setLineItems] = useState<LineItem[]>(
+    templateInvoice?.items?.length
+      ? templateInvoice.items.map((i: any) => ({
+          id: crypto.randomUUID?.() ?? Math.random().toString(),
+          description: i.description,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          taxRate: i.taxRate ?? defaultTaxRate,
+        }))
+      : [
+          {
+            id: crypto.randomUUID?.() ?? "1",
+            description: "",
+            quantity: 1,
+            unitPrice: 0,
+            taxRate: defaultTaxRate,
+          },
+        ]
+  );
 
   useEffect(() => {
     setLineItems((prev) =>
